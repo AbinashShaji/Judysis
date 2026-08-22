@@ -1,0 +1,50 @@
+.user_registration_container {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+  }
+  
+  .user_registration_box1 {
+    width: 50%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+  }
+  
+  .user_registration_input_group {
+    width: 70%;
+    min-height: 70vh;
+  }
+  
+  .user_registration_input label {
+    font-size: 15.17px;
+    font-weight: 600;
+    line-height: 20.18px;
+  }
+  
+  .user_registration_button button {
+    padding: 10px 40px;
+    border-radius: 27.09px;
+    background-color: #986f06;
+    color: #ffffff;
+    font-size: 16.11px;
+    font-weight: 900;
+    line-height: 19.5px;
+    border: none;
+  }
+  
+  .user_registration_box2 {
+    width: 50%;
+    min-height: 60vh;
+    background-image: url(../Assets/userReg.png);
+    background-size: cover;
+    display: flex;
+    /* align-items: flex-end;  */
+  }
+  
+  .user_registration_box2 img {
+    max-width: 100%;
+    height: auto;
+  }

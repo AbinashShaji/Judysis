@@ -1,0 +1,80 @@
+.main-div{
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 20px;
+    margin-left: 30px;
+}
+
+.table-container {
+    padding: 10px ;
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+  
+.ju-table-header{
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.main-div{
+    border: 2px;
+    border-color: black;
+    border-radius: 5px;
+}
+
+.button-size{
+    width: 100px;
+}
+  
+th, td {
+    padding: 20px;
+    text-align: center;
+}
+  
+.table-data{
+    text-align: left;
+}
+
+.ju-table-data{
+    font-family:'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+}
+
+.icon-style-change{
+    color: black;
+    width: 40%;
+    height: 40%;
+}
+
+/* .btn1{
+    border-color:#986F06;
+    height: 46px;
+    width: 55px;
+}
+
+.btn1:hover{
+    border-color: #986F06;
+    background-color: #986f0668 ;
+} */
+
+/* .button-size1{
+    height: 46px;
+    width: 55px;
+}
+
+
+.button-size1{
+    width: 100px;
+} */
+
+.success-size{
+    height: 45px;
+    width: 50px;
+}

@@ -1,0 +1,14 @@
+.button-style-appoinment{
+    background-color: #986F06;
+    border-color: #986F06;
+    color: white;
+    margin-bottom: 40px;
+}
+.button-style-appoinment:hover{
+    background-color: #986f06e9;
+    border-color: #986f06e9;
+    
+}
+.appoinment-btn-div{
+    text-align: center;
+}

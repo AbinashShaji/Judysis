@@ -1,0 +1,61 @@
+.user-footer{
+    width: 100%;
+    background: #2A2A2A;
+    padding-top: 40px;
+    padding-bottom: 50px;
+
+}
+
+.footer-title{
+    color: white;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: bolder;
+}
+
+/* .footer-logo-text{
+    padding-top: 20px;
+    font-family: 'Poppins', Arial, sans-serif;
+    width: 100px;
+    font-weight: 700;
+} */
+
+.footer-logo-text-change1 {
+    font-size: 23px;
+    font-weight: bold;
+    margin-left: 10px;
+    color: white;
+  }
+
+.footer-list{
+    color:rgba(252, 249, 249, 0.216);
+    list-style-type: none;
+    font-family: 'Poppins', Arial, sans-serif;
+    position: relative;
+
+}
+
+.quick-link, .legal, .help{
+    padding-left: 30px;
+}
+
+.list-style{
+    padding-bottom: 10px;
+}
+
+.help-div{
+margin-bottom: 60px;
+}
+
+.legal-margin, .quick-margin, .help-div{
+    margin-top: 40px;
+}
+
+.quick{
+    padding-left: 20px;
+}
+
+.lawyer, .lawyer-intro{
+    padding-left: 20px;
+    padding-right: 30px;
+
+}

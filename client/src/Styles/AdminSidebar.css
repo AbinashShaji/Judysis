@@ -1,0 +1,145 @@
+.admin-sidebar{
+    min-height: 100vh;
+    width:100%;
+    background-color: #2A2A2A;
+}
+
+.profile-div{
+    height: 100%;
+    background: #AA9166;
+    padding: 20px 0;
+}
+
+.img-style{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.profile-label{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: bolder;
+    padding-top: 20px;
+
+}
+.image-adjust-1{
+    height: 25px;
+}
+
+.image-adjust-2{
+    height: 30px;
+}
+
+.image-adjust-3{
+    height: 20px;
+}
+.content-div{
+    height: 100%;
+    background-color: #2A2A2A;  
+    align-items: center;
+}
+
+.label-general{
+    padding-top: 70px;
+    padding-bottom: 30px;
+    padding-left:15px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 26.15px;
+    text-align: left;
+    color: #FFFFFF;
+}
+
+.img1-padding{
+    padding-left: 10px;
+}
+
+.img2-padding{
+    padding-left: 5px;
+    height: 35px;
+}
+
+.div-style{
+    margin-left: 30px;
+}
+
+.label-sub{
+    color: white;
+    padding-top: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 30 px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}
+
+.adjust-space{
+    padding-left: 5px;
+    padding-bottom: 20px;
+    font-size: large;
+}
+
+.img-enq{
+    height: 20px;
+}
+
+.each{
+    padding-left: 14px;
+}
+
+.each-1{
+    padding-left: 12px;
+}
+
+@media (max-width: 1200px) {
+    
+    .profile-label {
+      font-size: 14px;
+      margin-left: 25px;
+
+    }
+    .label-general {
+      font-size: 14px;
+
+    }
+    .label-sub {
+      font-size: 14px;
+
+    }
+  }
+  
+  /* for medium screen */
+  @media (max-width: 992px) {
+  
+    .profile-label {
+      font-size: 12px;
+    }
+    .label-general {
+      font-size: 12px;
+    }
+    .label-sub {
+      font-size: 12px;
+    }
+  }
+  
+  /* for small screen */
+  @media (max-width: 768px) {
+    
+   
+    .profile-label {
+      font-size: 12px;
+      margin-left: 25px;
+    }
+    .label-general {
+      font-size: 12px;
+    }
+    .label-sub {
+      font-size: 12px;
+    }
+    
+  }

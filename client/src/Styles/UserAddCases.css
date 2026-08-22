@@ -1,0 +1,82 @@
+.user_add_cases {
+  min-height: 100vh;
+  background-color: #f3eded;
+  padding: 80px 0;
+}
+.add_cases_status {
+
+  background-color: #f3eded;
+  padding: 20px 0;
+}
+.user_add_cases_title label {
+  font-size: 20.43px;
+  font-weight: 400;
+  line-height: 27.17px;
+  text-align: left;
+}
+.adv-case-hearing{
+  min-height: 400px;
+}
+.user_add_case_sugg_box1 {
+  padding: 0 20px;
+}
+.bg-gold{
+  background-color: #986F06;
+  color: #ffffff;
+  border-radius: 15px;
+  padding: 10px 25px;
+}
+.user_add_case_sugg_box2 {
+  /* padding: 0 30px; */
+  margin-left: 10%;
+}
+
+.user_add_case_sugg_box1_title p {
+  font-size: 24.43px;
+  font-weight: 400;
+  line-height: 32.49px;
+}
+
+.user_add_case_sugg_box1_content {
+  min-height: 200px;
+  background-color: #ffffff;
+  padding: 25px;
+}
+
+.user_add_case_sugg_box1_content p {
+  font-size: 14.92px;
+  font-weight: 400;
+  line-height: 22.38px;
+}
+
+.user_add_case_sugg_box1_cards {
+  height: 150px;
+  width: 100%;
+  background-color: #ffffff;
+  display: flex;
+}
+
+.user_add_case_sugg_box1_img img {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+}
+
+.user_add_case_sugg_box1_details {
+  padding: 20px;
+  width: 100%;
+}
+
+.user_add_case_sugg_box1_details_head {
+  font-size: 18.43px;
+  font-weight: 400;
+  line-height: 32.49px;
+}
+
+.user_add_case_sugg_box1_details i {
+  font-size: 28.43px;
+  font-weight: 400;
+}
+.align-right{
+  margin-left: 50%;
+}

@@ -1,0 +1,10 @@
+.advocate_main{
+    min-height: 80vh;
+}
+
+.advocate_chat_sidebar{
+    flex: 1;
+    width: 40%; 
+    min-height: 80vh;
+    background-color:#3B3D47;
+}

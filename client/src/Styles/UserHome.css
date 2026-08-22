@@ -1,0 +1,121 @@
+.user_home {
+  width: 100%;
+  height: 90vh;
+  background-image: url('../Assets/userBanner.png');
+  background-repeat: no-repeat;
+  background-position-y: bottom;
+}
+
+.user_home_container {
+  min-height: 60vh;
+  width: 70%;
+  display: flex;
+  align-items: center;
+}
+
+.user_home_title {
+  font-size: 50px;
+  font-weight: 600;
+  line-height: 58.09px;
+  color: #ffffff;
+}
+
+.user_home_content {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24.2px;
+  text-align: left;
+  color: #ffffff;
+}
+
+.user_home_card_container {
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+.user_home_cards {
+  width: 24%;
+  height: 20vh;
+  background-color: #aa9166;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.user_home_cards p {
+  font-size: 23.54px;
+  font-weight: 700;
+  line-height: 33.88px;
+  text-align: left;
+  color: #ffffff;
+}
+
+.user_home_about_title {
+  font-size: 30.47px;
+  font-weight: 400;
+  line-height: 40.52px;
+  text-align: left;
+}
+
+.user_home_about_content {
+  font-size: 15.23px;
+  font-weight: 500;
+  line-height: 22.85px;
+  text-align: left;
+}
+
+.user_home_about_image {
+  min-height: 300px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.user_home_features {
+  min-height: 30vh;
+  width: 100%;
+  background-color: #aa9166;
+}
+
+.user_home_features_cards {
+  background-color: #ffffff;
+}
+
+.user_home_features_container {
+  width: 100%;
+  height: 15vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+.user_features_cards{
+    width: 29%;
+  min-height: 15vh;
+  background-color: #ffffff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+}
+
+.user_features_card_title{
+font-size: 13px;
+font-style: italic;
+font-weight: 500;
+line-height: 19.5px;
+text-align: left;
+margin: 0;
+
+}
+
+.user_features_card_content{
+font-size: 11px;
+font-style: italic;
+font-weight: 500;
+line-height: 16.5px;
+text-align: left;
+margin: 0;
+
+}

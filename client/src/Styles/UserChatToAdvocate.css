@@ -1,0 +1,126 @@
+.user_chat {
+    background-color: #F3EDED;
+    padding: 50px 0;
+  }
+  
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 80%; /* Increased the width */
+    border: 1px solid #83620E;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    margin: auto; /* Center the chat container horizontally */
+  }
+  
+  .chat-header {
+    display: flex;
+    align-items: center;
+    padding: 30px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ccc;
+  }
+
+ 
+  
+  .avatar {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .username {
+    /* font-weight: bold; */
+    color: black;
+    /* font-size: 12px; */
+    font-size: 0.8em;
+  }
+  
+  .chat-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #F3EDED;
+    min-height: 50vh;
+    max-height: 300px; /* Set a maximum height for the chat body */
+  }
+  
+  .chat-message {
+    margin-bottom: 10px;
+    padding: 10px; 
+    max-width: 70%;
+  }
+  .chat-image{
+    height:100px;
+    width: 100px;
+    border-radius: 50%;
+  }
+  .chat-message.sent {
+    background-color: #ffffff;
+    max-width: 40%;
+    border-radius: 8px 8px 0 8px;
+    align-self: flex-end;
+    margin-left: auto; /* Align the sent message to the right */
+    text-align: right; /* Align text to the right for sent messages */
+  }
+  
+  .chat-message.received {
+    max-width: 40%;
+    background-color: #AA9166;
+    border-radius: 0 8px 8px 8px;
+    color: #ffffff;
+    align-self: flex-start;
+    text-align: left; /* Align text to the left for received messages */
+  }
+  
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .timestamp {
+    font-size: 0.8em;
+    color: #ffffff;
+    }
+  
+  .message-content {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .chat-input {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    /* background-color: #ffffff; */
+    /* border-top: 1px solid #ccc; */
+    position: relative;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 15px;
+    padding-right: 40px; /* Add padding to the right to make space for the icon */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  .chat-input button {
+    position: absolute;
+    right: 30px; /* Adjust the position of the icon */
+    background: none; /* Remove the button background */
+    border: none; /* Remove the button border */
+    cursor: pointer;
+    color: black; /* Set the icon color to black */
+    font-size: 24px; /* Increase the size of the icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  

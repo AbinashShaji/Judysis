@@ -1,0 +1,87 @@
+
+.form-input-style{
+    font-size: 15px;
+    border-radius: 10px;
+    height: 50px;
+    font-family: 'Poppins' Verdana ;
+    border-width: 2px ;
+    border-color: black;
+}
+
+.heading-div{
+    height: 90px;
+    width: 100%;
+    background-color: #AA9166;
+    text-align: center;
+    padding-top: 18px;
+}
+
+.reg-title{
+    font-size: 30px;
+}
+
+.specialization-form-select{
+    border-radius: 10px;
+    height: 50px;
+    font-family: 'Poppins' Verdana ;
+    border-width: 2px ;
+    border-color: black;
+}
+.button-submit{
+    background-color: #986F06;
+    border-color: #986F06;
+}
+
+.button-submit:hover{
+    background-color: #986f06be;
+    border-color: #986F06;
+}
+
+.submit-btn-div{
+    text-align: center;
+
+}
+.advocateRegistrationmaindiv{
+    margin-top:100px;
+}
+.advocateRegistrationtitle {
+    color:#986F06;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 30px;
+    line-height: normal;
+    margin-top: 30px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .advocateRegistrationlabel{
+    font-size: 20px;
+
+}
+.custom-file-input-wrapper {
+    position: relative;
+  }
+  
+  .custom-file-input {
+    opacity: 0;
+    position: absolute;
+    z-index: 2;
+  }
+  
+  .custom-file-label {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  .advocateRegistrationdivlink{
+    text-decoration: none;
+margin-bottom: 10px;
+font-size: 15px;
+font-weight: bold;
+color:#986F06
+}

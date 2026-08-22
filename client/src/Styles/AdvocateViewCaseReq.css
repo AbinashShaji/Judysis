@@ -1,0 +1,133 @@
+.adv_view_case_req {
+  min-height: 90vh;
+  background-color: #f3eded;
+  padding: 30px;
+}
+
+/* Left Container */
+.adv_case_req_left_container1 {
+  background-color: #ffffff;
+  min-height: 350px;
+  border-radius: 14px;
+  margin-bottom: 30px;
+  padding: 20px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styling */
+.adv_case_req_left_container1_head {
+  height: 70px;
+  background-color: rgba(170, 145, 102, 0.54);
+  border-radius: 14px 14px 0 0;
+  font-size: 27px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  text-align: center;
+}
+
+/* Image Styling */
+.adv_case_req_left_container1_content_img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+
+}
+
+.adv_case_req_left_container1_content_img img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+/* Content Styling */
+.adv_case_req_left_container1_content {
+  padding: 20px 30px;
+}
+
+.adv_case_req_left_container1_content td {
+  text-align: left;
+  padding: 8px 10px;
+}
+
+/* Left Container 2 */
+.adv_case_req_left_container2 {
+  background-color: #ffffff;
+  min-height: 200px;
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Container */
+.adv_case_req_right_container {
+  min-height: 580px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Action Group */
+.adv_view_case_req_action_grps {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Action Button */
+.adv_view_case_req_action_btn {
+  padding: 10px 15px;
+  background-color: #aa9166;
+  border-radius: 5px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.adv_view_case_req_action_btn:hover {
+  background-color: #8f7653;
+}
+
+/* Form Inputs */
+.co_view_singlecase_addhearing_inp select,
+.co_view_singlecase_addhearing_inp input {
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Textarea Styling */
+.adv_case_req_left_container1_content textarea {
+  width: 300px;
+  height: 80px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .adv_case_req_left_container1_content_img img {
+    height: 150px;
+    width: 150px;
+  }
+
+  .adv_case_req_left_container1_content textarea {
+    width: 100%;
+  }
+
+  .co_view_singlecase_addhearing_inp select,
+  .co_view_singlecase_addhearing_inp input {
+    width: 100%;
+  }
+}

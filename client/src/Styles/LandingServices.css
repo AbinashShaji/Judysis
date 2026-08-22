@@ -1,0 +1,24 @@
+.LandingServicescontainer{
+    height:400px;
+    width:400px;
+    border:1px solid bisque;
+    padding:100px;
+    margin: 30px 80px;
+ }
+ .landindcardwidth{
+    width: 500px;
+    padding: 50px;
+    float: left;
+ }
+ .landinservicealign{
+    margin-top: 50px;
+ }
+ .landinserviceh1{
+    color: brown;
+    margin-left: 200px;
+    margin-bottom: 50px;
+ }
+ .landinserviceimg{
+ height: 200px; /* Adjust the height as needed */
+ object-fit: cover;
+ }

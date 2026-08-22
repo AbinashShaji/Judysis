@@ -1,0 +1,81 @@
+.ju-advocate-name{
+    font-size: 23.15px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ju-practice-area{
+    font-size: 20.15px;
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ju-experiance-label{
+    font-size: 15.65;
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ju-link-label{
+    font-size: 13px;
+    color: #986F06;
+}
+
+.ju-sub-label{
+    font-size: 11.67;
+    font-weight: 350;
+    text-align: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* .ju-custom-table {
+    border-collapse: separate;
+    border-spacing: 0 0px;
+  } */
+  
+  .ju-custom-table td {
+    border-top: none;
+    border-bottom: px solid #ccc;
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
+  .left-alignn{
+    text-align: left;
+  }
+  
+.btn-style{
+    background-color: #986F06;
+    width: 100px;
+    margin-left: 10px;
+}
+
+.ju-custom-table td.left-alignn {
+    text-align: left;
+    vertical-align: top;
+}
+
+.ju-custom-table td:first-child {
+    width: 200px;
+    white-space: nowrap;
+}
+
+.ju-custom-table td {
+    padding: 5px;
+}
+
+.ju-button-size1{
+    height: 40px;
+    width: 100px;
+}
+
+.image-size{
+    height: 100px;
+    width: 100px;
+}
+
+.admin_view_junioradvocate_img img{
+    height: 300px;
+    width: 400px;
+    object-fit: cover;
+}

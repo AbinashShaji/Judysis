@@ -1,0 +1,42 @@
+.adv_chat_sidebar_search{
+    padding: 20px 15px;
+}
+
+.adv_chat_sidebar_name{
+    padding: 0 15px 20px 15px;
+
+}
+
+.adv_chat_sidebar_name_img img{
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.adv_chat_sidebar_name_content{
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+}
+
+.adv_chat_sidebar_name_content p{
+    padding: 0;
+    margin: 0;
+
+}
+
+.adv_chat_sidebar_name a{
+    text-decoration: none;
+}
+
+.adv_chat_sidebar_no_recipient{
+    padding: 0 15px 20px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5rem;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}

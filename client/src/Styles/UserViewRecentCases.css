@@ -1,0 +1,39 @@
+.user_view_recent_cases {
+  min-height: 90vh;
+  width: 100%;
+  background-color: #f3eded;
+  /* padding: 5rem 10rem; */
+}
+
+.user_recent_cases_container {
+  min-height: 10vh;
+  min-width: 100%;
+  background-color: #ffffff;
+}
+.main-title{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 10px;
+  font-size: 27px;
+  font-weight: 400;
+  color: black;
+}
+
+.user_recent_cases_container th {
+  padding: 30px 40px;
+  font-size: 22.11px;
+  font-weight: 500;
+  line-height: 26.76px;
+  text-align: left;
+}
+.user_recent_cases_container td {
+  padding: 30px 40px;
+  font-size: 16.11px;
+  font-weight: 400;
+  line-height: 19.5px;
+  text-align: left;
+}
+
+.btn-recent{
+    background-color: #AA9166;
+    color: #ffffff;
+}

@@ -1,0 +1,36 @@
+.aboutush1{
+    color: brown;
+    margin-left: 100px;
+    /* margin-bottom: 50px; */
+    margin-top: 50px;
+ }
+ .aboutusimg1{
+    margin-bottom: 50px;
+    margin-top: 30px;
+    height:300px;
+    width:100%;
+    object-fit: cover;
+ }
+ .aboutusdiv1{
+ left: 700px;
+    margin-bottom: 50px;
+    top: 1550px;
+    height:500px;
+    position: absolute;
+    width:500px;
+    border: 1% silver solid;
+ }
+ .aboutusimg2{
+    height:300px;
+    width:100%;
+    object-fit: cover;
+ }
+ .aboutusdiv2{
+       margin-bottom: 50px;
+       top: 600px;
+       height:500px;
+       position: absolute;
+       width:500px;
+       left:0px;
+       border: 1% silver solid;
+    }

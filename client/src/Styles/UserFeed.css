@@ -1,0 +1,37 @@
+.feed-reg-title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 10px;
+    font-size: 27px;
+    font-weight: 400;
+    color: black;
+}
+
+.feed-heading-div{
+    height: 90px;
+    width: 100%;
+    background-color: #AA9166;
+    text-align: center;
+    padding-top: 18px;
+}
+.card-style-change{
+    height: 100%;
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border-color: #83620E;
+    padding: 20px;
+    border-radius: 20px;
+}
+.row-position-adjust{
+    margin-top:30px;
+    margin-bottom: 20px;
+}
+.control-border{
+    border-color: black;
+}
+.payment-name-style{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+}
