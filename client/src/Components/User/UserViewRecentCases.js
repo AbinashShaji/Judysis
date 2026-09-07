@@ -1,3 +1,20 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserViewRecentCases.js (Citizen Case History Dashboard)
+ * HANDOVER SUMMARY:
+ * This component displays all legal cases filed by the logged-in citizen.
+ * It renders individual case cards displaying:
+ * - Case Title and Incident Date
+ * - Assigned Advocate and Opponent details
+ * - Evidence attachment preview modal
+ * - Direct buttons to View Hearing Updates, Book Consultations, or Chat with the Lawyer.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_view_case
+ * - Fetches data from: POST /judisys_api/getCaseByUserId/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../Styles/UserViewRecentCases.css";
 import icon1 from "../../Assets/recentCaseTitle.png";
@@ -11,17 +28,22 @@ import noReqFound from "../../Assets/noReqFound.json";
 import Lottie from "lottie-react";
 import { toast } from "react-toastify";
 import ReactStars from "react-rating-stars-component";
-
 import { Modal, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { IMG_BASE_URL } from '../Services/BaseURL';
-import {  ViewById } from "../Services/CommonServices";
+import { ViewById } from "../Services/CommonServices";
+
 function UserViewRecentCases() {
+  // Master array of cases filed by this citizen
   const [array, setArray] = useState([]);
+  
+  // Filtered array for month/date filtering
   const [filteredArray, setFilteredArray] = useState([]);
+  
+  // Modal state for previewing evidence documents
   const [showModal, setShowModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [fileType, setFileType] = useState(""); // State to store the file type
+  const [fileType, setFileType] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const id = localStorage.getItem("user");
 

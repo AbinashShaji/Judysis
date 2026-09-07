@@ -1,3 +1,18 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserHome.js (Citizen Dashboard Home)
+ * HANDOVER SUMMARY:
+ * This is the main landing hub for logged-in citizens (petitioners).
+ * It presents legal practice highlights (Business Law, Civil Litigation, Insurance Defense),
+ * introduces judicial service guarantees, and guards against unauthorized access by checking
+ * if 'localStorage.getItem("user")' is present.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-home
+ * - Auth Guard: If no active user session exists, immediately redirects to /user-login.
+ * ============================================================================
+ */
+
 import React, { useEffect } from "react";
 import "../../Styles/UserHome.css";
 import icon1 from "../../Assets/userBannerIcon1.png";

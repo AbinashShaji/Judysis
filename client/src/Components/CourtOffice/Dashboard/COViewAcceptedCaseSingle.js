@@ -1,3 +1,32 @@
+/**
+ * ==============================================================================
+ * COURT OFFICE VIEW ACCEPTED CASE DETAILS (COViewAcceptedCaseSingle.js)
+ * ==============================================================================
+ * 
+ * What This Component Does:
+ * -------------------------
+ * This screen lets Court Office staff review all details of a case that has
+ * already been assigned to a judge and is actively progressing through court hearings.
+ * Staff can inspect:
+ *   1. Petitioner (citizen who filed) contact details.
+ *   2. Opponent (the accused or counterparty) information.
+ *   3. Case details (title, description, incident date, evidence file).
+ *   4. Assigned Judge details (name and contact number).
+ *   5. Full hearing history timeline (dates, statuses, next hearing schedules).
+ * 
+ * Routing & Rendering Flow:
+ * -------------------------
+ * - Rendered by Court Office routes when staff click "View More" on an assigned case
+ *   from the Accepted Cases List (`COViewAllCasesAccepted.js`).
+ * - Grabs the case ID directly from the URL parameters (`useParams`).
+ * - Makes two backend calls:
+ *     1. POST `getCaseById/:id` -> Fetches case and citizen details.
+ *     2. POST `getStatusByCaseId/:id` -> Fetches hearing history and assigned judge info.
+ * - Clicking "Evidence" opens a popup modal displaying the uploaded image or PDF document.
+ * - Clicking "Case Updates" reveals the table showing all hearing milestone updates.
+ * ==============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import icon1 from "../../../Assets/profile.png";
 import icon2 from "../../../Assets/mail.png";
@@ -8,9 +37,18 @@ import axiosInstance from "../../Services/BaseURLMain";
 import { IMG_BASE_URL } from "../../Services/BaseURL";
 import { Modal, Button } from "react-bootstrap";
 
+/**
+ * CoViewAcceptedCaseSingle Component
+ * -----------------------------------
+ * Displays petitioner details, opponent information, case facts, assigned judge,
+ * and an interactive hearing progress timeline for a specific court case.
+ */
 function CoViewAcceptedCaseSingle() {
+  // Grab the case ID from the browser URL
   const { id } = useParams();
   console.log(id);
+
+  // State storage variables
   const [Case, setCase] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [fileType, setFileType] = useState("");
@@ -19,6 +57,11 @@ function CoViewAcceptedCaseSingle() {
   const [data,setData]=useState([])
   const [showUpdate,setshowUpdate]=useState(false)
 
+  /**
+   * Effect Hook: Load Case Data
+   * ---------------------------
+   * Calls POST `getCaseById/:id` to retrieve core case information.
+   */
   useEffect(() => {
     axiosInstance
       .post(`getCaseById/${id}`)
@@ -31,10 +74,12 @@ function CoViewAcceptedCaseSingle() {
       });
   }, []);
 
-  //function for showing evidence modal
-
+  /**
+   * handleEvidenceClick
+   * -------------------
+   * Logic for processing and opening the evidence popup modal.
+   */
   const handleEvidenceClick = () => {
-    // const evidence = data?.user?.evidence || {};
     const evidence = Case?.evidence || {};
     const fileUrl = evidence.filename
       ? `${IMG_BASE_URL}/${evidence.filename}`
@@ -49,8 +94,19 @@ function CoViewAcceptedCaseSingle() {
     }
     setShowModal(true);
   };
+
+  /**
+   * handleClose
+   * -----------
+   * Closes the evidence preview popup modal.
+   */
   const handleClose = () => setShowModal(false);
 
+  /**
+   * Effect Hook: Load Hearing Statuses & Judges
+   * ------------------------------------------------
+   * Retrieves all hearing records and extracts unique assigned judge details.
+   */
   useEffect(() => {
     axiosInstance
       .post(`getStatusByCaseId/${id}`)
@@ -73,7 +129,11 @@ function CoViewAcceptedCaseSingle() {
   }, []);
 
 
-  //show updates modal
+  /**
+   * showUpdates
+   * -----------
+   * Toggles the hearing status updates table visibility.
+   */
   const showUpdates=(()=>{
     setshowUpdate(true)
   })
@@ -82,6 +142,7 @@ function CoViewAcceptedCaseSingle() {
     <div className="adv_view_case_req">
       <div className="container">
         <div className="row">
+          {/* LEFT COLUMN: Petitioner and Opponent Details */}
           <div className="col-5">
             <div className="adv_case_req_left_container1">
               <div className="adv_case_req_left_container1_head">
@@ -134,6 +195,7 @@ function CoViewAcceptedCaseSingle() {
               </div>
             </div>
           </div>
+          {/* RIGHT COLUMN: Case Facts, Assigned Judge, and Actions */}
           <div className="col-7">
             <div className="adv_case_req_right_container">
               <div className="adv_case_req_left_container1_head">
@@ -167,8 +229,9 @@ function CoViewAcceptedCaseSingle() {
                         </Link>
                       </td>
                     </tr>
+                    {/* Display assigned judge(s) name and phone number */}
                     {uniqueJudges.map((judge) => (
-                        <>
+                        <React.Fragment key={judge?._id}>
                       <tr>
                         <td>Judge Name</td>
                         <td>
@@ -181,7 +244,7 @@ function CoViewAcceptedCaseSingle() {
                             : {judge?.contact}{" "}
                       </td>
                     </tr>
-                    </>
+                    </React.Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -199,6 +262,7 @@ function CoViewAcceptedCaseSingle() {
           </div>
 
 
+          {/* CONDITIONAL SECTION: Hearing Updates History Table */}
           {showUpdate === true ? (
 
           <div className="col-12 mt-3">
@@ -262,6 +326,7 @@ function CoViewAcceptedCaseSingle() {
         </div>
       </div>
 
+      {/* POPUP MODAL: Evidence File Viewer */}
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Evidence</Modal.Title>

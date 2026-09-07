@@ -1,3 +1,29 @@
+/**
+ * ==============================================================================
+ * Project: Judysis - Judicial Management System
+ * File: COViewSinglecase.jsx
+ * Path: client/src/Components/CourtOffice/Dashboard/COViewSinglecase.jsx
+ * 
+ * WHAT THIS FILE DOES IN SIMPLE ENGLISH:
+ * This is the central case assignment and trial scheduling hub for Court Office staff.
+ * When a citizen files a case and their lawyer accepts it, this screen lets the court staff:
+ * 1. Inspect the complete lawsuit dossier (incident, opponent, evidence).
+ * 2. Automatically load judges whose specialization matches the case (e.g. Criminal Law judges for criminal cases).
+ * 3. Assign a Judge to preside over the case.
+ * 4. Schedule the "First Hearing" (date, status, and clerk remarks).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: Rendered within `/co-view-singleCase/:id` inside the `COMain` shell container.
+ * - Workflow:
+ *   - Step 1: Queries `/getCaseById/:id` to get case details.
+ *   - Step 2: Queries `/viewJudgesBySpecializn` matching `data.type` to populate the Judge dropdown.
+ *   - Step 3: Clicking "Assign Judge" posts `{ judgeId }` to `/assignJudgeCaseById/:id`.
+ *   - Step 4: Unlocks the "Add First Hearing" form.
+ *   - Step 5: Submitting the hearing posts to `/createStatus`, officially kicking off the trial
+ *     and redirecting staff to `/co_view_cases`.
+ * ==============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../../Styles/AdvocateViewCaseReq.css";
 import icon1 from "../../../Assets/profile.png";
@@ -17,7 +43,12 @@ import {
 } from "../../Services/CommonServices";
 import { approveById } from "../../Services/AdminService";
 
+/**
+ * COViewSinglecase Component
+ * Orchestrates judicial assignment and initial court hearing scheduling for new cases.
+ */
 function COViewSinglecase() {
+  // State storing the case details, filing party info, and incident metadata
   const [data, setData] = useState({
     userId: { profilePic: { filename: "" } },
     dateOfIncident: "",
@@ -27,35 +58,46 @@ function COViewSinglecase() {
 
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // Evidence attachment modal states
   const [showModal, setShowModal] = useState(false);
   const [evidenceUrl, setEvidenceUrl] = useState("");
   const [fileType, setFileType] = useState("");
+
+  // Judge selection states
   const [advocate, setAdvocate] = useState([]);
   const [selectedadvocate, setSelectedAdvocate] = useState("");
+  // Controls display of the First Hearing scheduling form
   const [showAssignModal, setShowAssignModal] = useState(false);
 
-
+  /**
+   * Effect Hook: Load Case Record
+   * Fetches full lawsuit incident and petitioner records.
+   */
   useEffect(() => {
     const fetchdata = async () => {
       try {
         console.log("id", id);
-
         const result = await ViewById("getCaseById", id);
 
         if (result.success) {
           console.log(result);
           setData(result.user || []);
         } else {
-          console.error("Advocate View Error :", result);
-          // toast.error(result.message);
+          console.error("Court Office View Error :", result);
         }
       } catch (error) {
         console.error("Unexpected error:", error);
-        toast.error("An unexpected error occurred during login");
+        toast.error("An unexpected error occurred while loading case details");
       }
     };
     fetchdata();
   }, [id]);
+
+  /**
+   * Effect Hook: Find Judges by Specialization
+   * Automatically queries available courtroom judges whose legal expertise matches this case type.
+   */
   useEffect(() => {
     const fetchdata = async () => {
       try {
@@ -68,23 +110,36 @@ function COViewSinglecase() {
           console.log(result);
           setAdvocate(result.user || []);
         } else {
-          console.error("Advocate View Error :", result);
-          // toast.error(result.message);
+          console.error("Judge Filter Error :", result);
         }
       } catch (error) {
         console.error("Unexpected error:", error);
-        toast.error("An unexpected error occurred during login");
+        toast.error("An unexpected error occurred while matching judges");
       }
     };
-    fetchdata();
+    if (data.type) {
+      fetchdata();
+    }
   }, [data.type]);
 
+  /**
+   * handleAdvChange
+   * Captures the clerk's selected Judge ID from the dropdown menu.
+   */
   const handleAdvChange = (e) => {
-    const month = e.target.value;
-    setSelectedAdvocate(month);
+    setSelectedAdvocate(e.target.value);
   };
 
-  const handleAssign = async (jid) => {
+  /**
+   * handleAssign
+   * Links the selected Judge to this case in the database.
+   */
+  const handleAssign = async () => {
+    if (!selectedadvocate) {
+      toast.warn("Please choose a judge first");
+      return;
+    }
+
     try {
       const result = await resetPassword(
         { judgeId: selectedadvocate },
@@ -93,23 +148,25 @@ function COViewSinglecase() {
       );
 
       if (result.success) {
+        // Unlock the First Hearing scheduling form
         setShowAssignModal(true);
+        toast.success("Judge assigned successfully! Please schedule the first hearing below.");
         console.log(result);
-        // navigate("/co_view_cases");
       } else {
-        console.error(" View Error :", result);
+        console.error("Assignment Error :", result);
         toast.error(result.message);
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      toast.error("An unexpected error occurred during login");
+      toast.error("An unexpected error occurred while assigning judge");
     }
   };
 
-  // console.log(data?.evidence?.filename+"datttttt");
-
+  /**
+   * handleEvidenceClick
+   * Opens evidence preview popup modal for PDF or image attachments.
+   */
   const handleEvidenceClick = () => {
-    // const evidence = data?.user?.evidence || {};
     const evidence = data?.evidence || {};
     const fileUrl = evidence.filename
       ? `${IMG_BASE_URL}/${evidence.filename}`
@@ -127,12 +184,7 @@ function COViewSinglecase() {
 
   const handleClose = () => setShowModal(false);
 
-  //updating first hearing by court official
-    //   console.log(data._id+"caseID");
-  const caseIdd=data._id
-  console.log(caseIdd);
-  
- 
+  // State storing the initial hearing record details
   const [firstHearing, setFirsthearing] = useState({
     caseId: "",
     status: "",
@@ -141,28 +193,34 @@ function COViewSinglecase() {
   });
   const [errors, setErrors] = useState({});
 
-
+  // Synchronize caseId into hearing form once case loads
   useEffect(() => {
     if (data._id) {
       setFirsthearing((prev) => ({
         ...prev,
-        caseId: data._id, // Update caseId when data._id is available
+        caseId: data._id,
       }));
     }
   }, [data._id]);
 
+  /**
+   * handleHearingChange
+   * Updates hearing inputs as the court clerk enters details.
+   */
   const handleHearingChange = (e) => {
     setFirsthearing({
       ...firstHearing,
       [e.target.name]: e.target.value,
     });
-    console.log(firstHearing);
-    
   };
 
+  /**
+   * validateForm
+   * Verifies required fields for scheduling the inaugural hearing.
+   */
   const validateForm = () => {
     let newErrors = {};
-  
+
     if (!firstHearing.status) {
       newErrors.status = "Status is required.";
     }
@@ -172,45 +230,44 @@ function COViewSinglecase() {
     if (!firstHearing.description.trim()) {
       newErrors.description = "Description is required.";
     }
-  
+
     setErrors(newErrors);
-    
     return Object.keys(newErrors).length === 0; 
   };
-  
 
-
-  const handleHearingSubmitfn=((e)=>{
-    e.preventDefault()
+  /**
+   * handleHearingSubmitfn
+   * Persists the inaugural hearing record to `/createStatus` and redirects clerk to the cases queue.
+   */
+  const handleHearingSubmitfn = (e) => {
+    e.preventDefault();
     if (validateForm()) {
-        console.log("Form is valid, submitting data...");
-        axiosInstance.post(`createStatus`,firstHearing)
-        .then((result)=>{
-            console.log(result);
-            if(result.data.status===200){
-                toast.success("Hearing Added Successfully")
-                navigate("/co_view_cases")
-            }
-            else{
-                toast.warn(result.data.msg)
-            }
-            
+      console.log("Form is valid, submitting data...");
+      axiosInstance.post(`createStatus`, firstHearing)
+        .then((result) => {
+          console.log(result);
+          if (result.data.status === 200) {
+            toast.success("Hearing Added Successfully");
+            // Return to master cases list
+            navigate("/co_view_cases");
+          } else {
+            toast.warn(result.data.msg);
+          }
         })
-        .catch((error)=>{
-            console.log(error);
-            
-        })
-    } else {
-        console.log("Form validation failed");
-      }
-  })
-
+        .catch((error) => {
+          console.error("Error creating hearing:", error);
+          toast.error("Failed to add hearing");
+        });
+    }
+  };
 
   return (
     <div className="adv_view_case_req">
       <div className="container">
         <div className="row">
+          {/* Left Column: Petitioner (Litigant) & Opponent Info */}
           <div className="col-5">
+            {/* Petitioner Details Card */}
             <div className="adv_case_req_left_container1">
               <div className="adv_case_req_left_container1_head">
                 <p>Petitioner Details</p>
@@ -219,31 +276,33 @@ function COViewSinglecase() {
                 <div>
                   <div className="d-flex mt-2">
                     <div className="px-3">
-                      <img src={icon1} alt="icon1" />
+                      <img src={icon1} alt="User Icon" />
                     </div>
-                    <div>{data.userId.name}</div>
+                    <div>{data.userId?.name}</div>
                   </div>
                   <div className="d-flex mt-2">
                     <div className="px-3">
-                      <img src={icon2} alt="icon2" />
+                      <img src={icon2} alt="Email Icon" />
                     </div>
-                    <div>{data.userId.email}</div>
+                    <div>{data.userId?.email}</div>
                   </div>
                   <div className="d-flex mt-2">
                     <div className="px-3">
-                      <img src={icon3} alt="icon3" />
+                      <img src={icon3} alt="Phone Icon" />
                     </div>
-                    <div>{data.userId.contact}</div>
+                    <div>{data.userId?.contact}</div>
                   </div>
                   <div className="d-flex mt-2">
                     <div className="px-3">
-                      <img src={icon4} alt="icon4" />
+                      <img src={icon4} alt="Location Icon" />
                     </div>
-                    <div>{data.userId.city}</div>
+                    <div>{data.userId?.city}</div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Opponent Details Card */}
             <div className="adv_case_req_left_container2 ">
               <div className="adv_case_req_left_container1_head">
                 <p>Opponent Details</p>
@@ -262,6 +321,8 @@ function COViewSinglecase() {
               </div>
             </div>
           </div>
+
+          {/* Right Column: Case Incident Summary & Judge Assignment Form */}
           <div className="col-7">
             <div className="adv_case_req_right_container">
               <div className="adv_case_req_left_container1_head">
@@ -284,7 +345,7 @@ function COViewSinglecase() {
                     </tr>
                     <tr>
                       <td>Date of Request</td>
-                      <td>: {data.dateOfIncident.slice(0, 10)}</td>
+                      <td>: {data.dateOfIncident?.slice(0, 10)}</td>
                     </tr>
                     <tr>
                       <td>Evidence</td>
@@ -295,6 +356,7 @@ function COViewSinglecase() {
                         </Link>
                       </td>
                     </tr>
+                    {/* Judge Selection Dropdown */}
                     <tr>
                       <td>Judge</td>
                       <td>
@@ -305,86 +367,91 @@ function COViewSinglecase() {
                           className="ms-2"
                         >
                           <option value="">Choose Judge</option>
-                          {console.log(advocate.length)}
-                          {advocate.length > 0
-                            ? advocate.map((x) => {
-                                return (
-                                  <>
-                                    <option value={x._id}>{x.name}</option>
-                                  </>
-                                );
-                              })
-                            : ""}
+                          {advocate.length > 0 &&
+                            advocate.map((x) => (
+                              <option key={x._id} value={x._id}>
+                                {x.name}
+                              </option>
+                            ))}
                         </select>
                       </td>
                     </tr>
                   </tbody>
                 </table>
+
+                {/* Button to confirm judge assignment */}
                 <div className="adv_view_case_req_actions text-center mt-2">
                   <button className="btn bg-gold" onClick={handleAssign}>
                     Assign Judge
                   </button>
                 </div>
 
-                {/* Showing inputs for adding case hearing details */}
-                {showAssignModal === true ? (
-                  <div>
-                    <form>
-                    <table>
-                      <tr className="col-6">
-                        <td className="col-3">Status </td>
-                        <td className="col-6 co_view_singlecase_addhearing_inp">
-                          :{" "}
-                          <select 
-                          name="status"
-                        //   value={firstHearing.status}
-                          onChange={handleHearingChange}
-                          >
-                            <option hidden>Select Status</option>
-                            <option value="Schedule First Hearing">
-                              Schedule First Hearing
-                            </option>
-                            <option value="On Hold">On Hold</option>
-                          </select>
-                          {errors.status && <p className="error-text">{errors.status}</p>}
-                        </td>
-                      </tr>
-                      <tr className="col-6">
-                        <td className="col-3">Hearing Date </td>
-                        <td className="col-6 co_view_singlecase_addhearing_inp">
-                          : <input type="date" id="dateInput" 
-                          min={new Date().toISOString().split("T")[0]}
-                          onChange={handleHearingChange}
-                          name="hearingDate"
-                          value={firstHearing.hearingDate}
-                          />
+                {/* First Hearing Scheduling Form (Unlocked after judge is assigned) */}
+                {showAssignModal === true && (
+                  <div className="mt-4">
+                    <form onSubmit={handleHearingSubmitfn}>
+                      <table>
+                        <tbody>
+                          {/* Hearing Status */}
+                          <tr className="col-6">
+                            <td className="col-3">Status </td>
+                            <td className="col-6 co_view_singlecase_addhearing_inp">
+                              :{" "}
+                              <select 
+                                name="status"
+                                onChange={handleHearingChange}
+                                defaultValue=""
+                              >
+                                <option value="" hidden>Select Status</option>
+                                <option value="Schedule First Hearing">
+                                  Schedule First Hearing
+                                </option>
+                                <option value="On Hold">On Hold</option>
+                              </select>
+                              {errors.status && <p className="error-text">{errors.status}</p>}
+                            </td>
+                          </tr>
+
+                          {/* Hearing Date Picker */}
+                          <tr className="col-6">
+                            <td className="col-3">Hearing Date </td>
+                            <td className="col-6 co_view_singlecase_addhearing_inp">
+                              : <input 
+                                  type="date" 
+                                  id="dateInput" 
+                                  min={new Date().toISOString().split("T")[0]}
+                                  onChange={handleHearingChange}
+                                  name="hearingDate"
+                                  value={firstHearing.hearingDate}
+                                />
                               {errors.hearingDate && <p className="error-text">{errors.hearingDate}</p>}
+                            </td>
+                          </tr>
 
-                        </td>
-                      </tr>{" "}
-                      <tr className="col-6">
-                        <td className="col-3">Description </td>
-                        <td className="col-6 co_view_singlecase_addhearing_inp">
-                          : <textarea
-                          name="description"
-                          value={firstHearing.description}
-                          onChange={handleHearingChange} />
+                          {/* Hearing Remarks Description */}
+                          <tr className="col-6">
+                            <td className="col-3">Description </td>
+                            <td className="col-6 co_view_singlecase_addhearing_inp">
+                              : <textarea
+                                  name="description"
+                                  value={firstHearing.description}
+                                  onChange={handleHearingChange} 
+                                  placeholder="Enter courtroom schedule details or remarks"
+                                />
                               {errors.description && <p className="error-text">{errors.description}</p>}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
 
-                        </td>
-                      </tr>
-                    </table>
-                    <div className="adv_view_case_req_actions text-center mt-2">
-                  <button className="btn bg-gold" onClick={handleHearingSubmitfn}>
-                    Add First Hearing
-                  </button>
-                  
-                </div>
-                </form>
+                      {/* Confirm Inaugural Hearing Submission */}
+                      <div className="adv_view_case_req_actions text-center mt-2">
+                        <button type="submit" className="btn bg-gold">
+                          Add First Hearing
+                        </button>
+                      </div>
+                    </form>
                   </div>
-
-                ) : (
-                  <></>
                 )}
               </div>
             </div>
@@ -392,6 +459,7 @@ function COViewSinglecase() {
         </div>
       </div>
 
+      {/* Evidence Preview Modal */}
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Evidence</Modal.Title>
@@ -421,3 +489,4 @@ function COViewSinglecase() {
 }
 
 export default COViewSinglecase;
+

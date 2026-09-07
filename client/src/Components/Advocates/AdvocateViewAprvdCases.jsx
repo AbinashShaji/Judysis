@@ -1,3 +1,17 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateViewAprvdCases.jsx (Lawyer Active Caseload Table)
+ * HANDOVER SUMMARY:
+ * This component lists all cases that the lawyer has accepted for representation.
+ * It displays case titles, client names, contact numbers, opponent names, and provides
+ * action buttons to inspect case dossiers or view hearing timelines.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /advocate_view_all_recent_case
+ * - Fetches from: POST /judisys_api/getApprovedAppointmentsForAdv/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import '../../Styles/Advocate_ViewCaseRequest.css';
@@ -8,7 +22,7 @@ import { toast } from "react-toastify";
 
 function AdvocateViewAprvdCases() {
   const [data, setData] = useState([]);
-  const id=localStorage.getItem('advocate');
+  const id = localStorage.getItem('advocate');
 
 
   useEffect(() => {

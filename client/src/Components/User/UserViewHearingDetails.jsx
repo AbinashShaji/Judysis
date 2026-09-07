@@ -1,13 +1,29 @@
-// UserViewHearingDetails.js
+/**
+ * ============================================================================
+ * COMPONENT: UserViewHearingDetails.jsx (Court Hearing Progression Timeline)
+ * HANDOVER SUMMARY:
+ * This component displays the official court hearing journey for a specific case (:id).
+ * A citizen can review:
+ * - Each hearing session date and status
+ * - Notes and orders recorded by the presiding judge
+ * - The next scheduled court hearing date
+ * - Lawyer performance star rating feedback
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_view_case_updations/:id
+ * - Calls: POST /judisys_api/getStatusByCaseId/:id via fetchHearingsByCaseId()
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { fetchHearingsByCaseId } from "../Services/CommonServices"; // Import common fetch function
+import { fetchHearingsByCaseId } from "../Services/CommonServices";
 import "../../Styles/UserAddCases.css";
 import ReactStars from "react-rating-stars-component";
 
 function UserViewHearingDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // Case ID
   const [hearings, setHearings] = useState([]);
   const [rating, setRating] = useState(0);
   const [advId, setAdvId] = useState('');

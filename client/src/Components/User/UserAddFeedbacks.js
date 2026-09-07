@@ -1,12 +1,25 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserAddFeedbacks.js (Citizen Feedback Submission)
+ * HANDOVER SUMMARY:
+ * This component provides a clean card form where citizens can write reviews, 
+ * feedback, or complaints regarding their judicial or advocate experiences.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-add-feed
+ * - Submits to: POST /judisys_api/addfeedback
+ * - Submissions appear directly on the Admin Feedback table (AdminViewFeedbacks.jsx).
+ * ============================================================================
+ */
+
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import '../../Styles/UserFeed.css'
+import '../../Styles/UserFeed.css';
 import { register } from '../Services/CommonServices';
-
 
 function UserAddFeedbacks() {
   const [complaint, setComplaint] = useState('');
-  const id=localStorage.getItem('user')
+  const id = localStorage.getItem('user');
 
   const handleComplaintChange = (event) => {
     setComplaint(event.target.value);

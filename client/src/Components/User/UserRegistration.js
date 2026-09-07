@@ -1,29 +1,53 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserRegistration.js (Citizen Onboarding Portal)
+ * HANDOVER SUMMARY:
+ * This component handles new citizen (petitioner) account registrations.
+ * It provides a friendly form where users enter their name, email, contact number, 
+ * government Aadhar ID, city, birthdate, and upload a profile picture.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-reg
+ * - Submits data to: POST /judisys_api/registerUser via registerWithFile()
+ * - If successful: Displays a success alert and redirects the user to /user-login.
+ *   The new account enters the Admin approval queue (AdminViewUserReqs.js).
+ * ============================================================================
+ */
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../Styles/UserReg.css";
 import img from '../../Assets/clientReg.png';
 import { toast } from "react-toastify";
 import 'remixicon/fonts/remixicon.css';
-
 import { registerWithFile } from "../Services/CommonServices";
 
 function UserRegistration() {
+    // State to store form input fields (name, email, password, etc.)
     const [data, setData] = useState('');
 
-    const [showPassword, setShowPassword] = useState(false)
+    // State to toggle between hiding and showing the password text
+    const [showPassword, setShowPassword] = useState(false);
+    
+    // State to capture validation error messages
     const [errors, setErrors] = useState({});
+    
+    // Navigation hook to redirect users to login page upon success
     const navigate = useNavigate();
 
+    // Toggle password visibility eye icon
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
+    // Update state whenever an input field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData({
           ...data,
           [name]: value,
         });
-      };
+    };
     const validate = () => {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -1,5 +1,14 @@
-import React from 'react'
-import '../../Styles/ContactUs.css'
+/**
+ * ============================================================================
+ * COMPONENT: ContactUs.js (Help Desk & Inquiry Page)
+ * HANDOVER SUMMARY:
+ * This component provides an inquiry form where prospective clients and citizens
+ * can post general questions or messages to the support desk.
+ * ============================================================================
+ */
+
+import React from 'react';
+import '../../Styles/ContactUs.css';
 
 function ContactUs() {
   return (

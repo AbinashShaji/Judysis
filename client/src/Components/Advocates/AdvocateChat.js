@@ -1,3 +1,16 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateChat.js (Lawyer Messenger Layout)
+ * HANDOVER SUMMARY:
+ * This component coordinates the two halves of the lawyer's chat interface:
+ * 1. Left Sidebar (<AdvocateChatSidebar />): List of all active client conversations.
+ * 2. Right Box (<AdvocateChatBox />): Active message bubbles and message input bar.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /advocate_chat and /advocate_single_chat/:uid
+ * ============================================================================
+ */
+
 import React from "react";
 import "../../Styles/AdvocateChat.css";
 import AdvocateChatSidebar from "./AdvocateChatSidebar";

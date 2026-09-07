@@ -1,3 +1,17 @@
+/**
+ * ============================================================================
+ * COMPONENT: AboutUs.js (About Us Story & Mission Page)
+ * HANDOVER SUMMARY:
+ * This component tells the story behind JudiSys: the mission to eliminate legal 
+ * paperwork delays, the vision for accessible justice, and why citizens and legal 
+ * professionals choose the platform.
+ * 
+ * SMART RENDERING FLOW:
+ * Dynamically displays the appropriate navbar depending on who is visiting
+ * (Citizen, Lawyer, or Public Guest).
+ * ============================================================================
+ */
+
 import React from "react";
 import img1 from "../../Assets/img21.jpg";
 import img2 from "../../Assets/img20.jpg";
@@ -6,9 +20,9 @@ import img12 from "../../Assets/adv2.avif";
 import img13 from "../../Assets/adv4.avif";
 import UserNavbar from "../User/UserNavbar";
 import AdvocateNavbar from "../Advocates/AdvocateNavbar";
-
 import "../../Styles/AboutUs.css";
 import LandingNavbar from "../LandingPage/LandingNavbar";
+
 function AboutUs() {
   const userId = localStorage.getItem("user");
   const advocateId = localStorage.getItem("advocate");

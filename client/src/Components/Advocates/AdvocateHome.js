@@ -1,11 +1,24 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateHome.js (Lawyer Home Dashboard)
+ * HANDOVER SUMMARY:
+ * This is the central workspace for logged-in lawyers.
+ * It displays the advocate's profile banner, star ratings, and lists all pending
+ * consultation requests with citizen names and case dates.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /advocate-home
+ * - Fetches profile from: POST /judisys_api/viewAdvocateById/:id
+ * - Fetches consultation requests from: POST /judisys_api/getAppointmentReqsForAdv/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../Styles/AdvocateHome.css";
 import icon from "../../Assets/policeHomeCaseIcon.png";
-
 import { Link, useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import { toast } from "react-toastify";
-
 import { ViewById } from "../Services/CommonServices";
 import { IMG_BASE_URL } from "../Services/BaseURL";
 import noData from "../../Assets/noDataFound.json";
@@ -19,7 +32,7 @@ function AdvocateHome() {
   const id = localStorage.getItem("advocate");
   const imageUrl = IMG_BASE_URL;
 
-  // Redirect if not authenticated
+  // Redirect to landing if lawyer is not authenticated
   useEffect(() => {
     if (!id) navigate("/");
   }, [id, navigate]);

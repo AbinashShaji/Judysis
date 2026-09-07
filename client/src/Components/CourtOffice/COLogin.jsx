@@ -1,3 +1,24 @@
+/**
+ * ==============================================================================
+ * Project: Judysis - Judicial Management System
+ * File: COLogin.jsx
+ * Path: client/src/Components/CourtOffice/COLogin.jsx
+ * 
+ * WHAT THIS FILE DOES IN SIMPLE ENGLISH:
+ * This component is the sign-in portal for Court Office Staff (Registry Clerks).
+ * Court office staff are responsible for reviewing filed cases, appointing
+ * judges to benches, and verifying citizen case submissions.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: `/court-office-login`
+ * - Authentication Flow:
+ *   - Verifies username against `'court'` and password against `'court@123'`.
+ *   - On successful entry: Saves session flag `localStorage.setItem("court", 1)`.
+ *   - Redirects to `/co-dashboard`.
+ *   - Unlocks the Court Office operations suite in `App.js` (`COMain`, judge assignment, case verification).
+ * ==============================================================================
+ */
+
 import React, { useState } from "react";
 import "../../Styles/AdminLogin.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -5,129 +26,147 @@ import { toast } from "react-toastify";
 
 import img from "../../Assets/img22.jpeg";
 
+/**
+ * COLogin Component
+ * Provides credential inputs and validation for court registry staff.
+ */
 function COLogin() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-    const [data, setData] = useState('');
+  // State storing the entered username and password
+  const [data, setData] = useState({ email: '', password: '' });
 
-    const [showPassword, setShowPassword] = useState(false)
-    const [errors, setErrors] = useState({});
-    // useEffect(() => {
-    //     if (localStorage.getItem("admin") == 1)
-    //         navigate('/admin-home');
-    // }, []);
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setData({
-            ...data,
-            [name]: value,
-        });
-    };
-    const validate = () => {
-        const newErrors = {};
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // State controlling password visibility toggle
+  const [showPassword, setShowPassword] = useState(false);
+  // State storing validation error messages
+  const [errors, setErrors] = useState({});
 
-        if (!data.email) {
-            console.log("here");
+  /**
+   * togglePasswordVisibility
+   * Toggles whether the password is masked or visible as plain text.
+   */
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-            newErrors.email = 'Email is required';
-        }
+  /**
+   * handleChange
+   * Updates state as the court staff types their credentials.
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value,
+    });
+  };
 
-        if (!data.password) {
-            newErrors.password = 'Password is required';
-        }
+  /**
+   * validate
+   * Ensures username and password fields are filled before checking credentials.
+   */
+  const validate = () => {
+    const newErrors = {};
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+    if (!data.email) {
+      newErrors.email = 'Email is required';
+    }
 
-    const handleLogin = async (e) => {
-        e.preventDefault()
-        console.log(errors);
+    if (!data.password) {
+      newErrors.password = 'Password is required';
+    }
 
-        console.log("api called", validate());
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-        if (!validate()) {
-            toast.error('Please fix the errors in the form.');
-            return;
-        }
-        const hardCodedUsername = 'court';
-        const hardCodedPassword = 'court@123';
-        if (data.email === hardCodedUsername && data.password === hardCodedPassword) {
-            localStorage.setItem("court", 1);
-            toast.success('Login successful!');
-            navigate('/co-dashboard');
-        } else {
-            toast.error('Incorrect Username or Password');
-        }
-    };
+  /**
+   * handleLogin
+   * Verifies office credentials and initializes court staff session in localStorage.
+   */
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
+    if (!validate()) {
+      toast.error('Please fix the errors in the form.');
+      return;
+    }
 
-    return (
-        <div>
-            <div className="container">
-             
-                    <div className="row mt-5">
-                        <div className="col-6">
-                            <div className="container justify-content-center">
-                                <img src={img} className="img-fluid w-100 mt-5" alt="user_reg_img" />
-                            </div>
-                            </div>
-                        <div className="col-6">
-                                <div className="user_registration_input_group admin-login-div1">
-                                    <h3 className="co-login-h3">Court Office Login</h3>
-                                    <form onSubmit={handleLogin}>
-                                        <div className=" mt-5">
-                                            <label>Username</label>
-                                            <input
-                                                type="text"
-                                                className="form-control border border-dark"
-                                                placeholder="Enter Username"
-                                                name="email"
-                                            value={data.email}
-                                            onChange={handleChange}
+    // Default administrative credentials for Court Office personnel
+    const hardCodedUsername = 'court';
+    const hardCodedPassword = 'court@123';
 
-                                            />
-                                            {errors.email && (
+    if (data.email === hardCodedUsername && data.password === hardCodedPassword) {
+      // Set session authorization key
+      localStorage.setItem("court", 1);
+      toast.success('Login successful!');
+      // Navigate to the master court office operations dashboard
+      navigate('/co-dashboard');
+    } else {
+      toast.error('Incorrect Username or Password');
+    }
+  };
+
+  return (
+    <div>
+      <div className="container">
+        <div className="row mt-5">
+          {/* Left Column: Court Office Illustration */}
+          <div className="col-6">
+            <div className="container justify-content-center">
+              <img src={img} className="img-fluid w-100 mt-5" alt="Court Office Login Banner" />
+            </div>
+          </div>
+
+          {/* Right Column: Sign-in Form */}
+          <div className="col-6">
+            <div className="user_registration_input_group admin-login-div1">
+              <h3 className="co-login-h3">Court Office Login</h3>
+              <form onSubmit={handleLogin}>
+                {/* Username Input */}
+                <div className="mt-5">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    className="form-control border border-dark"
+                    placeholder="Enter Username"
+                    name="email"
+                    value={data.email}
+                    onChange={handleChange}
+                  />
+                  {errors.email && (
                     <span className="text-danger">{errors.email}</span>
                   )}
-                                        </div>
-                                        <div className=" mt-4">
-                                            <label>Password</label>
-                                            <input
-                                                type="password"
-                                                className="form-control border border-dark"
-                                                placeholder="Password"
-                                                name="password"
-                                            value={data.password}
-                                            onChange={handleChange}
-                                           
-                                            />
-                                            {errors.password&& (
+                </div>
+
+                {/* Password Input */}
+                <div className="mt-4">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    className="form-control border border-dark"
+                    placeholder="Password"
+                    name="password"
+                    value={data.password}
+                    onChange={handleChange}
+                  />
+                  {errors.password && (
                     <span className="text-danger">{errors.password}</span>
                   )}
-                                        </div>
-
-                                        <div className="user_registration_button text-center mt-5 d-flex justify-content-evenly">
-                                            <button type="submit">Submit</button>
-                                            <button type="reset">Reset</button>
-                                        </div>
-
-
-                                    </form>  </div>
-                          
-                        </div>
-
-                    </div>
-
-
                 </div>
-         
+
+                {/* Form Buttons */}
+                <div className="user_registration_button text-center mt-5 d-flex justify-content-evenly">
+                  <button type="submit">Submit</button>
+                  <button type="reset" onClick={() => setData({ email: '', password: '' })}>Reset</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
-export default COLogin;
+export default COLogin;

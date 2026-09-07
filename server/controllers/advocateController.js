@@ -1,9 +1,25 @@
+/**
+ * ============================================================================
+ * CONTROLLER: advocateController.js
+ * HANDOVER SUMMARY:
+ * This controller manages accounts, authentication, legal profiles, and ratings
+ * for Advocates (Lawyers). Lawyers are the legal defenders in JudiSys. They register
+ * with official Bar Council credentials, receive consultation bookings from citizens,
+ * accept cases, review court hearing schedules, and consult via integrated chat.
+ * ============================================================================
+ */
+
 const Advocate = require('../models/advocateModel');
-
 const multer = require("multer");
-const user=require('../models/userModel')
+const user = require('../models/userModel');
 
-
+/**
+ * FILE UPLOAD STORAGE (Multer)
+ * Lawyers must upload two crucial files during registration:
+ * 1. 'profilePic' - Professional headshot photo.
+ * 2. 'idProof' - Official Bar Council ID or law degree certificate.
+ * Both files are stored with unique timestamp prefixes inside './upload'.
+ */
 const storage = multer.diskStorage({
   destination: function (req, res, cb) {
     cb(null, "./upload");
@@ -16,45 +32,52 @@ const storage = multer.diskStorage({
     cb(null, filename);
   },
 });
-const upload = multer({ storage: storage }).fields([
-    { name: 'profilePic', maxCount: 1 },  // For Profile Picture
-    { name: 'idProof', maxCount: 1 }      // For ID Proof
-  ]);
 
+// Middleware to capture both files during initial advocate registration.
+const upload = multer({ storage: storage }).fields([
+    { name: 'profilePic', maxCount: 1 },
+    { name: 'idProof', maxCount: 1 }
+]);
+
+// Middleware for uploading only a new profile picture during profile editing.
 const uploadProfile = multer({ storage: storage }).single('profilePic');
 
-// Register Advocate
+/**
+ * FUNCTION: registerAdvocate
+ * PURPOSE: Registers a new lawyer, saving their legal credentials and identity documents.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Register' button on AdvocateReg.js.
+ * - Endpoint: POST /judisys_api/registerAdvocate
+ * - Validation Checks:
+ *   1. Is the Bar Council Enrollment Number already registered?
+ *   2. Is the phone number already registered?
+ *   3. Is the email address already registered?
+ * - If this data changes: A new advocate record is created with 'adminApproved: false'.
+ *   The lawyer appears in the Admin review queue (AdminViewAdvReqs.js).
+ */
 const registerAdvocate = async (req, res) => {
     try {
-        const { fname,lname, bcNo, contact, email, password, experience, dob,specialization } = req.body;
+        const { fname, lname, bcNo, contact, email, password, experience, dob, specialization } = req.body;
 
-        const profilePic = req.files.profilePic[0]
-        const idProof = req.files.idProof[0]
+        const profilePic = req.files.profilePic[0];
+        const idProof = req.files.idProof[0];
 
         const newAdvocate = new Advocate({
-            name:fname+" "+lname,
+            name: fname + " " + lname,
             bcNo,
-            
             contact,
             email,
             password,
-           
-            
             experience,
-            
             dob,
-            experience,
-           
             specialization,
-            idProof:idProof,
-            profilePic:profilePic
+            idProof: idProof,
+            profilePic: profilePic
         });
-        let existingAdvocate3 = await Advocate.findOne({ email });
-        
-        let existingAdvocate5 = await user.findOne({ email });
 
+        // Step 1: Prevent duplicate Bar Council enrollment numbers.
         let existingAdvocate = await Advocate.findOne({ bcNo });
-        let existingAdvocate2 = await Advocate.findOne({ contact });
         if (existingAdvocate) {
             return res.json({
                 status: 409,
@@ -62,19 +85,29 @@ const registerAdvocate = async (req, res) => {
                 data: null
             });
         }
-        else if(existingAdvocate2) {
+
+        // Step 2: Prevent duplicate phone numbers.
+        let existingAdvocate2 = await Advocate.findOne({ contact });
+        if (existingAdvocate2) {
             return res.json({
                 status: 409,
                 msg: "Contact Number Already Registered With Us !!",
                 data: null
             });
-        }   else if(existingAdvocate3||existingAdvocate5) {
+        }
+
+        // Step 3: Prevent duplicate emails across both advocates and citizens.
+        let existingAdvocate3 = await Advocate.findOne({ email });
+        let existingAdvocate5 = await user.findOne({ email });
+        if (existingAdvocate3 || existingAdvocate5) {
             return res.status(409).json({
                 status: 409,
                 msg: "Email Already Registered With Us !!",
                 data: null
             });
         }
+
+        // Step 4: Save new lawyer profile to MongoDB.
         await newAdvocate.save()
             .then(data => {
                 return res.status(200).json({
@@ -85,7 +118,6 @@ const registerAdvocate = async (req, res) => {
             })
             .catch(err => {
                 console.log(err);
-
                 if (err.code === 11000) {
                     return res.status(409).json({
                         status: 409,
@@ -101,14 +133,19 @@ const registerAdvocate = async (req, res) => {
             });
     } catch (error) {
         console.log(error);
-        
         res.status(500).json({ message: error.message });
     }
 };
 
-// View all advocates
+/**
+ * FUNCTION: viewAdvocates
+ * PURPOSE: Retrieves all approved lawyers (adminApproved: true).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Populates the lawyer directory in ViewAllAdvocates.js.
+ */
 const viewAdvocates = (req, res) => {
-    Advocate.find({adminApproved:true})
+    Advocate.find({ adminApproved: true })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -121,7 +158,7 @@ const viewAdvocates = (req, res) => {
                 res.json({
                     status: 200,
                     msg: "No Data obtained",
-                    data:[]
+                    data: []
                 });
             }
         })
@@ -133,8 +170,16 @@ const viewAdvocates = (req, res) => {
             });
         });
 };
+
+/**
+ * FUNCTION: viewActiveAdvocates
+ * PURPOSE: Retrieves only active, verified advocates ready to consult with citizens.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The citizen lawyer catalog on User_ViewAllAdvocates.js.
+ */
 const viewActiveAdvocates = (req, res) => {
-    Advocate.find({isActive:true})
+    Advocate.find({ isActive: true })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -147,7 +192,7 @@ const viewActiveAdvocates = (req, res) => {
                 res.json({
                     status: 200,
                     msg: "No Data obtained",
-                    data:[]
+                    data: []
                 });
             }
         })
@@ -160,10 +205,17 @@ const viewActiveAdvocates = (req, res) => {
         });
 };
 
-
-// View all advocates
+/**
+ * FUNCTION: viewAdvocatesBySpecializn
+ * PURPOSE: Finds the top 5 highest-rated lawyers in a particular practice area (Civil, Criminal, etc.).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Powers category filtering on User_ViewAllAdvocates.js.
+ */
 const viewAdvocatesBySpecializn = (req, res) => {
-    Advocate.find({specialization:req.body.specialization}).sort({rating:-1}).limit(5)
+    Advocate.find({ specialization: req.body.specialization })
+        .sort({ rating: -1 })
+        .limit(5)
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -188,9 +240,15 @@ const viewAdvocatesBySpecializn = (req, res) => {
         });
 };
 
-// View all advocate Reqs
+/**
+ * FUNCTION: viewAdvocateReqs
+ * PURPOSE: Retrieves all advocates waiting for Admin approval (adminApproved: false).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Populates the pending requests table on AdminViewAdvReqs.js.
+ */
 const viewAdvocateReqs = (req, res) => {
-    Advocate.find({adminApproved:false})
+    Advocate.find({ adminApproved: false })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -215,10 +273,17 @@ const viewAdvocateReqs = (req, res) => {
         });
 };
 
-
-// approve Advocate
+/**
+ * FUNCTION: approveAdvocateById
+ * PURPOSE: Admin officially verifies a lawyer's credentials and activates their account.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Approve' button on AdminViewAdvReqs.js.
+ * - Endpoint: POST /judisys_api/approveAdvocateById/:id
+ * - If this data changes: The lawyer can now log in, take on cases, and receive appointments!
+ */
 const approveAdvocateById = (req, res) => {
-    Advocate.findByIdAndUpdate({_id:req.params.id},{adminApproved:true,isActive:true})
+    Advocate.findByIdAndUpdate({ _id: req.params.id }, { adminApproved: true, isActive: true })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -243,10 +308,12 @@ const approveAdvocateById = (req, res) => {
         });
 };
 
-
-// approve Advocate
+/**
+ * FUNCTION: activateAdvocateById
+ * PURPOSE: Re-enables a suspended advocate account (isActive: true).
+ */
 const activateAdvocateById = (req, res) => {
-    Advocate.findByIdAndUpdate({_id:req.params.id},{isActive:true})
+    Advocate.findByIdAndUpdate({ _id: req.params.id }, { isActive: true })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -271,10 +338,12 @@ const activateAdvocateById = (req, res) => {
         });
 };
 
-
-// approve Advocate
+/**
+ * FUNCTION: deactivateAdvocateById
+ * PURPOSE: Freezes a lawyer's account access (isActive: false).
+ */
 const deactivateAdvocateById = (req, res) => {
-    Advocate.findByIdAndUpdate({_id:req.params.id},{isActive:false})
+    Advocate.findByIdAndUpdate({ _id: req.params.id }, { isActive: false })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -299,10 +368,12 @@ const deactivateAdvocateById = (req, res) => {
         });
 };
 
-
-// reject Advocate
+/**
+ * FUNCTION: rejectAdvocateById
+ * PURPOSE: Rejects an advocate's registration by removing their record from MongoDB.
+ */
 const rejectAdvocateById = (req, res) => {
-    Advocate.findByIdAndDelete({_id:req.params.id})
+    Advocate.findByIdAndDelete({ _id: req.params.id })
         .exec()
         .then(data => {
             if (data.length > 0) {
@@ -327,26 +398,29 @@ const rejectAdvocateById = (req, res) => {
         });
 };
 
-// Update advocate by ID
+/**
+ * FUNCTION: editAdvocateById
+ * PURPOSE: Updates an advocate's biography, contact number, or profile photo.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Save Profile' button on AdvocateEditProfile.js.
+ */
 const editAdvocateById = async (req, res) => {
-    const { name, bcNo, bcState, contact, email, password, gender, address, experience, nationality, qualification, dob, professionalExperience, dateOfEnrollment, specialization } = req.body;
-console.log("profilePic",req.body.filename);
+    const { name, bcNo, contact, email, password, gender, address, experience, dob, professionalExperience, specialization } = req.body;
+
     Advocate.findByIdAndUpdate({ _id: req.params.id }, {
         name,
         bcNo,
-        
         contact,
         email,
         password,
         gender,
         address,
         experience,
-       
         dob,
         professionalExperience,
-        
         specialization,
-        profilePic:req.file
+        profilePic: req.file
     })
         .exec()
         .then(data => {
@@ -364,15 +438,17 @@ console.log("profilePic",req.body.filename);
         });
 };
 
-// View advocate by ID
+/**
+ * FUNCTION: viewAdvocateById
+ * PURPOSE: Fetches the detailed public and private profile of a single advocate.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: User_ViewAdvocateDetail.jsx and AdvocateEditProfile.js.
+ */
 const viewAdvocateById = (req, res) => {
-    console.log(req.params.id );
-    
     Advocate.findById({ _id: req.params.id })
         .exec()
         .then(data => {
-            console.log(data);
-            
             res.status(200).json({
                 status: 200,
                 msg: "Data obtained successfully",
@@ -381,7 +457,6 @@ const viewAdvocateById = (req, res) => {
         })
         .catch(err => {
             console.log(err);
-            
             res.status(500).json({
                 status: 500,
                 msg: "No Data obtained",
@@ -390,9 +465,12 @@ const viewAdvocateById = (req, res) => {
         });
 };
 
-// Delete advocate by ID
+/**
+ * FUNCTION: deleteAdvocateById
+ * PURPOSE: Marks an advocate account as 'inactive'.
+ */
 const deleteAdvocateById = (req, res) => {
-    Advocate.findByIdAndUpdate({ _id: req.params.id },{isActive:'inactive'})
+    Advocate.findByIdAndUpdate({ _id: req.params.id }, { isActive: 'inactive' })
         .exec()
         .then(data => {
             res.json({
@@ -410,48 +488,49 @@ const deleteAdvocateById = (req, res) => {
         });
 };
 
-// Forgot Password for advocate
-const forgotPassword =async (req, res) => {
+/**
+ * FUNCTION: forgotPassword
+ * PURPOSE: Resets a lawyer's password via their registered email address.
+ */
+const forgotPassword = async (req, res) => {
+    const adv = await Advocate.findOne({ email: req.body.email });
 
-    let userData=null,type="nil"
-   const adv= await Advocate.findOne({email: req.body.email })
-
-
-    const user=await user.findOne({  email: req.body.email })
-
-    if(adv){
-    Advocate.findOneAndUpdate({ email: req.body.email }, {
-        password: req.body.password
-    })
-        .exec()
-        .then(data => {
-            if (data != null)
-                res.json({
-                    status: 200,
-                    msg: "Updated successfully"
-                });
-            else
-                res.json({
-                    status: 500,
-                    msg: "User Not Found"
-                });
+    if (adv) {
+        Advocate.findOneAndUpdate({ email: req.body.email }, {
+            password: req.body.password
         })
-        .catch(err => {
-            res.status(500).json({
-                status: 500,
-                msg: "Data not Updated",
-                Error: err
+            .exec()
+            .then(data => {
+                if (data != null)
+                    res.json({
+                        status: 200,
+                        msg: "Updated successfully"
+                    });
+                else
+                    res.json({
+                        status: 500,
+                        msg: "User Not Found"
+                    });
+            })
+            .catch(err => {
+                res.status(500).json({
+                    status: 500,
+                    msg: "Data not Updated",
+                    Error: err
+                });
             });
+    } else {
+        res.status(405).json({
+            status: 405,
+            msg: "User Not Found"
         });
+    }
+};
 
-}else{
-    res.status(405).json({
-        status: 405,
-        msg: "User Not Found"
-    })
-}
-}
-// Reset Password for advocate
+/**
+ * FUNCTION: resetPassword
+ * PURPOSE: Verifies the old password before applying a new password for a lawyer.
+ */
 const resetPassword = async (req, res) => {
     let pwdMatch = false;
 
@@ -501,9 +580,20 @@ const resetPassword = async (req, res) => {
     }
 };
 
-//advocate login
-
-// Login User
+/**
+ * FUNCTION: login
+ * PURPOSE: Authenticates an Advocate using their email and password.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Sign In' button on AdvocateLogin.js.
+ * - Endpoint: POST /judisys_api/loginAdvocate
+ * - Checks:
+ *   1. Account existence.
+ *   2. Password match.
+ *   3. Admin approval (If false: "Please wait for Admin Approval !!").
+ *   4. Active account state (If false: "You are currently deactivated By Admin !!").
+ * - If valid: Saves advocate ID to localStorage and redirects to AdvocateHome.js.
+ */
 const login = (req, res) => {
     const { email, password } = req.body;
 
@@ -511,7 +601,6 @@ const login = (req, res) => {
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
-console.log(user);
 
         if (user.password !== password) {
             return res.status(403).json({ msg: 'Password Mismatch !!' });
@@ -524,12 +613,9 @@ console.log(user);
             return res.status(403).json({ msg: 'You are currently deactivated By Admin !!' });
         }
 
-      
-
         res.json({
             status: 200,
             data: user,
-           
         });
     }).catch(err => {
         console.error(err);
@@ -537,23 +623,31 @@ console.log(user);
     });
 };
 
-
-//
-
+/**
+ * FUNCTION: addRating
+ * PURPOSE: Calculates a rolling average star rating for a lawyer when a citizen leaves a review.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Submitting a star rating on User_ViewAdvocateDetail.jsx.
+ * - Endpoint: POST /judisys_api/addRating/:id
+ * - Formula: If previous rating exists, new rating = (oldRating + newRating) / 2.
+ * - If this data changes: Updates the star rating displayed on the lawyer's profile card!
+ */
 const addRating = (req, res) => {
     let newRate = parseInt(req.body.rating);
     let rating = 0;
+
     Advocate.findById({ _id: req.params.id })
       .exec()
       .then((data) => {
         rating = data.rating;
+        // Calculate rolling average
         if (data.rating != 0) rating = (rating + newRate) / 2;
         else rating = newRate;
+
         Advocate.findByIdAndUpdate(
           { _id: req.params.id },
-          {
-            rating: rating,
-          },
+          { rating: rating },
           { new: true }
         )
           .exec()
@@ -572,8 +666,8 @@ const addRating = (req, res) => {
             });
           });
       });
-  };
-  
+};
+
 module.exports = {
     registerAdvocate,
     viewAdvocates,

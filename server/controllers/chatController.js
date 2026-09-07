@@ -1,22 +1,43 @@
+/**
+ * ============================================================================
+ * CONTROLLER: chatController.js
+ * HANDOVER SUMMARY:
+ * This controller powers the real-time direct messaging system in JudiSys.
+ * It allows citizens to safely consult and exchange case updates with their assigned lawyers.
+ * It records the message text, tracks sender/recipient identities, groups conversation
+ * histories, and populates the chat sidebars.
+ * ============================================================================
+ */
+
 const chat = require("../models/chatSchema");
 
+/**
+ * FUNCTION: chatting
+ * PURPOSE: Saves a newly sent chat message into the MongoDB database.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Clicking 'Send' in AdvocateChatBox.js or UserChattoAdvocate.js.
+ * - Endpoint: POST /judisys_api/chatting
+ * - If this data changes: The message is saved with a timestamp and immediately appended
+ *   to the visible message bubbles in the active conversation window.
+ */
 const chatting = async (req, res) => {
-
-  // Create a new message
+  // Step 1: Create a new message document capturing sender, recipient, case link, and text.
   const message = new chat({
     msg: req.body.msg,
-    from:req.body.from,
+    from: req.body.from,
     to: req.body.to,
     advId: req.body.advId,
     userId: req.body.userId,
     internId: req.body.internId,
     jrId: req.body.jrId,
-    caseId:req.body.caseId,
-    date:new Date()
+    caseId: req.body.caseId,
+    date: new Date()
   });
+
+  // Step 2: Save the message in MongoDB.
   await message
     .save()
-
     .then((data) => {
       res.json({
         status: 200,
@@ -33,36 +54,39 @@ const chatting = async (req, res) => {
     });
 };
 
+/**
+ * FUNCTION: viewChatRecipientsforAdvocateById
+ * PURPOSE: Finds all unique citizens (clients) who have open chat threads with this lawyer.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Component load in AdvocateChatSidebar.js.
+ * - Endpoint: POST /judisys_api/viewChatRecipientsforAdvocateById/:id
+ * - If this data changes: Renders the contact list on the lawyer's chat sidebar so they
+ *   can click on a client's name to open their message thread.
+ */
 const viewChatRecipientsforAdvocateById = (req, res) => {
-  let uniqueUsers=[]
   chat
     .find({ advId: req.params.id })
     .populate("userId")
-   
-
     .exec()
     .then((data) => {
-      // console.log(data);
       if (data.length > 0) {
-        let users = [],us=[]
+        let users = [];
+        // Extract citizen profiles from message logs
         data.map((x) => {
-          if(x.userId){
-          users.push(x.userId);
+          if (x.userId) {
+            users.push(x.userId);
           }
-          
-        
-
         });
         
-        if(users.length>0)
-         users = [...new Set(users)]
-    
+        // Remove duplicate clients so each person appears only once in the sidebar
+        if (users.length > 0)
+          users = [...new Set(users)];
 
         res.json({
           status: 200,
           msg: "Data obtained successfully",
           data: users,
-         
         });
       } else {
         res.json({
@@ -79,6 +103,16 @@ const viewChatRecipientsforAdvocateById = (req, res) => {
       });
     });
 };
+
+/**
+ * FUNCTION: viewChatRecipientsforUserId
+ * PURPOSE: Finds all unique lawyers with whom a citizen currently has active chat threads.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Component load in the citizen chat view (UserChattoAdvocate.js).
+ * - Endpoint: POST /judisys_api/viewChatRecipientsforUserId/:id
+ * - If this data changes: Renders the list of lawyers in the citizen's chat sidebar.
+ */
 const viewChatRecipientsforUserId = (req, res) => {
   chat
     .find({ userId: req.params.id })
@@ -86,10 +120,11 @@ const viewChatRecipientsforUserId = (req, res) => {
     .exec()
     .then((data) => {
       if (data.length > 0) {
-        adv = [];
+        let adv = [];
         data.map((x) => {
           adv.push(x.advId);
         });
+        // Remove duplicate lawyer profiles
         const uniqueAdvs = [...new Set(adv)];
         res.json({
           status: 200,
@@ -111,21 +146,26 @@ const viewChatRecipientsforUserId = (req, res) => {
       });
     });
 };
+
+/**
+ * FUNCTION: viewChatBetweenUserAndAdv
+ * PURPOSE: Retrieves the full chronological message exchange between one citizen and one lawyer.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Selecting a contact in UserChattoAdvocate.js or AdvocateChatBox.js.
+ * - Endpoint: POST /judisys_api/viewChatBetweenUserAndAdv
+ * - If this data changes: Feeds the message bubbles in the active chat view, sorted by date (oldest to newest).
+ */
 const viewChatBetweenUserAndAdv = (req, res) => {
   let advId = req.body.advId;
   let userId = req.body.userId;
+
   chat
-    .find({
-      // $or: [{
-       advId: advId, userId: userId },
-        // { rpid: parentid, parentid: rpid },
-      // ],}
-    )
+    .find({ advId: advId, userId: userId })
     .sort({ date: 1 })
     .populate('advId')
     .populate('userId')
     .exec()
-    
     .then((data) => {
       res.status(200).json({
         status: 200,
@@ -141,17 +181,17 @@ const viewChatBetweenUserAndAdv = (req, res) => {
       });
     });
 };
+
+/**
+ * FUNCTION: viewChatBetweenAdvAndJr
+ * PURPOSE: Retrieves message history between a senior advocate and a junior advocate.
+ */
 const viewChatBetweenAdvAndJr = (req, res) => {
   let advId = req.body.advId;
   let jrId = req.body.jrId;
-  console.log("jid",jrId);
+
   chat
-    .find({
-      // $or: [{
-       advId: advId, jrId: jrId },
-        // { rpid: parentid, parentid: rpid },
-      // ],}
-    )
+    .find({ advId: advId, jrId: jrId })
     .sort({ date: 1 })
     .populate('jrId')
     .populate('advId')
@@ -172,16 +212,16 @@ const viewChatBetweenAdvAndJr = (req, res) => {
     });
 };
 
+/**
+ * FUNCTION: viewChatBetweenInternAndAdv
+ * PURPOSE: Retrieves message history between a law intern and their supervising advocate.
+ */
 const viewChatBetweenInternAndAdv = (req, res) => {
   let advId = req.body.advId;
   let internId = req.body.internId;
+
   chat
-    .find({
-      // $or: [{
-       advId: advId, internId: internId },
-        // { rpid: parentid, parentid: rpid },
-      // ],}
-    )
+    .find({ advId: advId, internId: internId })
     .sort({ date: 1 })
     .populate('internId')
     .populate('advId')
@@ -200,23 +240,22 @@ const viewChatBetweenInternAndAdv = (req, res) => {
         Error: err,
       });
     });
-}; 
-                                                                                                                                                                            
+};
+
+/**
+ * FUNCTION: viewChatBetweenUserAndJunior
+ * PURPOSE: Retrieves message history between a citizen and an assisting junior advocate.
+ */
 const viewChatBetweenUserAndJunior = (req, res) => {
   let jrId = req.body.jrId;
   let userId = req.body.userId;
+
   chat
-    .find({
-      // $or: [{
-        userId: userId, jrId: jrId },
-        // { rpid: parentid, parentid: rpid },
-      // ],}
-    )
+    .find({ userId: userId, jrId: jrId })
     .sort({ date: 1 })
     .populate('jrId')
     .populate('userId')
     .exec()
-    
     .then((data) => {
       res.json({
         status: 200,
@@ -233,32 +272,28 @@ const viewChatBetweenUserAndJunior = (req, res) => {
     });
 };
 
-
+/**
+ * FUNCTION: checkIfJrInchat
+ * PURPOSE: Checks whether a junior advocate has participated in messages regarding a specific case.
+ */
 const checkIfJrInchat = (req, res) => {
   let userId = req.body.userId;
   let caseId = req.body.caseId;
-let arr=[]
+  let arr = [];
+
   chat
-    .find({
-      // $or: [{
-        userId: userId,caseId:caseId},
-        // { rpid: parentid, parentid: rpid },
-      // ],}
-    )
+    .find({ userId: userId, caseId: caseId })
     .sort({ date: 1 })
     .populate('jrId')
     .populate('userId')
     .exec()
-    
     .then((data) => {
-      data.map(x=>{
-        console.log(x);
-if(x.from=="jradvocate"&&x.to=="user" )
-  arr.push(x)
- if(x.from=="user"&&x.to=="jradvocate" )
-   arr.push(x)
-
-      })
+      data.map(x => {
+        if (x.from == "jradvocate" && x.to == "user")
+          arr.push(x);
+        if (x.from == "user" && x.to == "jradvocate")
+          arr.push(x);
+      });
       res.json({
         status: 200,
         msg: "got it successfully",
@@ -273,6 +308,7 @@ if(x.from=="jradvocate"&&x.to=="user" )
       });
     });
 };
+
 module.exports = {
   chatting,
   viewChatRecipientsforAdvocateById,

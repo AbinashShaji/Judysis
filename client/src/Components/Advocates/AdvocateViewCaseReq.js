@@ -1,3 +1,21 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateViewCaseReq.js (Single Case Request Review)
+ * HANDOVER SUMMARY:
+ * This component displays the full details of an incoming citizen case request.
+ * The advocate can review the client's information, incident date, dispute narrative, 
+ * inspect uploaded evidence files in a modal preview, and officially:
+ * - Accept the request (assigning themselves to represent the case)
+ * - Reject the request (notifying the citizen)
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /advocate_view_single_case_req/:id
+ * - Fetches from: POST /judisys_api/getAppointmentReqsById/:id
+ * - Accept action: POST /judisys_api/acceptReqbyAdv/:id
+ * - Reject action: POST /judisys_api/rejectReqbyAdv/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../Styles/AdvocateViewCaseReq.css";
 import img from "../../Assets/adv4.avif";
@@ -6,7 +24,6 @@ import icon2 from "../../Assets/mail.png";
 import icon3 from "../../Assets/contact.png";
 import icon4 from "../../Assets/house.png";
 import icon5 from "../../Assets/location.png";
-
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Modal, Button } from "react-bootstrap";
@@ -19,7 +36,6 @@ function AdvocateViewCaseReq() {
     userId: { profilePic: { filename: "" } },
     caseId: { dateOfIncident: "", evidence: {} },
   });
-
   const { id } = useParams();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);

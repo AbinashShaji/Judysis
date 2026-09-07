@@ -1,30 +1,47 @@
 
 
-    import React, { useState } from "react";
-    import "../../Styles/AdminLogin.css";
-    import { Link, useNavigate } from "react-router-dom";
-    import { toast } from "react-toastify";
-    
-    import img from "../../Assets/img20.jpg";
+/**
+ * ============================================================================
+ * COMPONENT: UserLogin.js (Citizen Sign In Portal)
+ * HANDOVER SUMMARY:
+ * This component handles citizen (petitioner) authentication.
+ * It takes an email and password, checks validation rules, and contacts the backend
+ * via POST /judisys_api/loginUser.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-login
+ * - On Success: Saves user ID to localStorage ('user') and navigates to the Citizen Dashboard (/user-home).
+ * - On Failure: Displays toast alerts ("Password Mismatch", "Please wait for Admin Approval").
+ * ============================================================================
+ */
+
+import React, { useState } from "react";
+import "../../Styles/AdminLogin.css";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import img from "../../Assets/img20.jpg";
 import { login } from "../Services/CommonServices";
-    
-    function UserLogin() {    
-        const [data, setData] = useState('');
-    
-        const [showPassword, setShowPassword] = useState(false)
-        const [errors, setErrors] = useState({});
-        const navigate = useNavigate();
-    
-        const togglePasswordVisibility = () => {
-            setShowPassword(!showPassword);
-        };
-        const handleChange = (e) => {
-            const { name, value } = e.target;
-            setData({
-              ...data,
-              [name]: value,
-            });
-          };
+
+function UserLogin() {    
+    // Holds the login form inputs (email, password)
+    const [data, setData] = useState('');
+
+    // Toggle password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setData({
+          ...data,
+          [name]: value,
+        });
+    };
         const validate = () => {
             const newErrors = {};
         

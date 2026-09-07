@@ -1,3 +1,17 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateNavbar.js (Lawyer Navigation Header)
+ * HANDOVER SUMMARY:
+ * This is the persistent top navigation bar for logged-in lawyers.
+ * It provides instant access to:
+ * - Home dashboard (/advocate-home)
+ * - Cases menu (New Requests, Active Caseload)
+ * - Client Messaging Chat (/advocate_chat)
+ * - Profile Settings (/advocate_edit_profile)
+ * - Secure Lawyer Logout (clears 'advocate' localStorage)
+ * ============================================================================
+ */
+
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import img1 from "../../Assets/logo2.png";
@@ -7,6 +21,7 @@ function AdvocateNavbar() {
   const navigate = useNavigate();
   const advocateId = localStorage.getItem("advocate");
 
+  // Route Guard: Ensures only authenticated lawyers can view protected screens.
   useEffect(() => {
     if (localStorage.getItem("advocate") == null) {
       navigate("/");

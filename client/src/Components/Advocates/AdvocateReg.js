@@ -1,12 +1,27 @@
-import React, { useState } from 'react'
-import '../../Styles/AdvocateReg.css'
-import img1 from "../../Assets/adv4.avif"
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateReg.js (Lawyer Registration Portal)
+ * HANDOVER SUMMARY:
+ * This component allows practicing advocates (attorneys) to create an account.
+ * Lawyers enter their legal credentials, Bar Council enrollment number, practice specialty,
+ * years of courtroom experience, and upload their official Bar ID and headshot.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /att-signup
+ * - Submits via: POST /judisys_api/registerAdvocate using registerWithFile()
+ * - Upon submission: Lawyer status is set to pending; appears on AdminViewAdvReqs.js for vetting.
+ * ============================================================================
+ */
+
+import React, { useState } from 'react';
+import '../../Styles/AdvocateReg.css';
+import img1 from "../../Assets/adv4.avif";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { registerWithFile } from '../Services/CommonServices';
 
 function AdvcateReg() {
-const navigate=useNavigate()
+  const navigate = useNavigate();
   const [data, setData] = useState({
     fname: '',
     lname: '',

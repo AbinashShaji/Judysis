@@ -1,29 +1,38 @@
-import React, { useEffect } from 'react'
+/**
+ * ============================================================================
+ * COMPONENT: UserNavbar.js (Citizen Navigation Header)
+ * HANDOVER SUMMARY:
+ * This is the persistent top navigation bar for logged-in citizens.
+ * It provides quick access to:
+ * - Home dashboard (/user-home)
+ * - Cases menu (Add Case, View Cases)
+ * - Advocates catalog (/user-viewalladvocate)
+ * - Citizen Profile & Feedback
+ * - Secure Logout (clears localStorage session)
+ * ============================================================================
+ */
+
+import React, { useEffect } from 'react';
 import img1 from '../../Assets/logo2.png';
 import { Link, useNavigate } from 'react-router-dom';
-import '../../Styles/AdminNav.css'
+import '../../Styles/AdminNav.css';
 
 function UserNavbar() {
+    const navigate = useNavigate();
+    const userId = localStorage.getItem('user');
 
-    const navigate=useNavigate();
-    const userId=localStorage.getItem('user')
-    console.log(userId);
-    
-
-    useEffect(()=>{
-        if(userId===null){
-            navigate('/')
+    // Route Protection: If citizen logs out or session expires, send to landing page.
+    useEffect(() => {
+        if (userId === null) {
+            navigate('/');
         }
-    })
+    });
 
+    // Logout Function: Clears citizen session and navigates home.
     const handleLogout = () => {
-      localStorage.removeItem('user');
+        localStorage.removeItem('user');
         navigate("/");
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 500);
-       
-      };
+    };
 
   return (
     <div>

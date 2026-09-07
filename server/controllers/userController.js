@@ -1,6 +1,22 @@
+/**
+ * ============================================================================
+ * CONTROLLER: userController.js
+ * HANDOVER SUMMARY:
+ * This controller manages accounts, authentication, and profile settings for Citizens (Litigants).
+ * Citizens are the regular people who use JudiSys to seek legal justice. They register,
+ * upload identity documents, browse specialized lawyers, book appointments, and file cases.
+ * The administrator uses this controller to review and approve citizens before they can log in.
+ * ============================================================================
+ */
+
 const User = require('../models/userModel'); 
 const multer = require("multer");
 
+/**
+ * FILE UPLOAD STORAGE (Multer)
+ * Handles uploading the citizen's profile picture or verification document.
+ * Files are given a unique timestamp prefix and saved into the './upload' folder.
+ */
 const storage = multer.diskStorage({
     destination: function (req, res, cb) {
         cb(null, "./upload");
@@ -14,10 +30,26 @@ const storage = multer.diskStorage({
     },
 });
 
+// Multer middleware for a single profile photo file.
 const uploadSingle = multer({ storage: storage }).single('profilePic');
+
+/**
+ * FUNCTION: registerUser
+ * PURPOSE: Onboards a new citizen with their contact info, Aadhar number, and profile photo.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Register' button on UserRegistration.js.
+ * - Endpoint: POST /judisys_api/registerUser
+ * - Validation:
+ *   1. Checks if the Phone Contact is already registered.
+ *   2. Checks if the Email Address is already registered.
+ *   3. Checks if the Government Aadhar ID is already registered.
+ * - If this data changes: A new citizen record is created with 'adminApproved: false'.
+ *   The user appears in the Admin pending verification queue (AdminViewUserReqs.js).
+ */
 const registerUser = async (req, res) => {
     try {
-        const { email, contact, password, aadhar, city, dob, gender,name } = req.body;
+        const { email, contact, password, aadhar, city, dob, gender, name } = req.body;
 
         const newUser = new User({
             email,
@@ -31,7 +63,7 @@ const registerUser = async (req, res) => {
             name
         });
 
-        // Check for existing users
+        // Step 1: Check for duplicate contact number.
         let existingUser = await User.findOne({ contact });
         if (existingUser) {
             return res.status(409).json({
@@ -40,6 +72,7 @@ const registerUser = async (req, res) => {
             });
         }
 
+        // Step 2: Check for duplicate email.
         existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({
@@ -48,6 +81,7 @@ const registerUser = async (req, res) => {
             });
         }
         
+        // Step 3: Check for duplicate Aadhar card number.
         existingUser = await User.findOne({ aadhar });
         if (existingUser) {
             return res.status(409).json({
@@ -56,17 +90,23 @@ const registerUser = async (req, res) => {
             });
         }
 
+        // Step 4: Save new citizen profile in MongoDB.
         await newUser.save();
         return res.status(200).json({
             msg: "Inserted successfully",
             data: newUser,
-            status:200
+            status: 200
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
     }
 };
+
+/**
+ * FUNCTION: requestAdvocate
+ * PURPOSE: Flags that a citizen is actively seeking an advocate for legal representation.
+ */
 const requestAdvocate = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -91,7 +131,15 @@ const requestAdvocate = async (req, res) => {
   }
 };
 
-// View all Users for Admin
+/**
+ * FUNCTION: viewUsersForAdminAprvl
+ * PURPOSE: Retrieves all citizens whose accounts are awaiting Admin review (adminApproved: false).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: Component load in AdminViewUserReqs.js.
+ * - Endpoint: POST /judisys_api/viewUsersForAdmin
+ * - Populates the verification table where the admin can click 'Approve' or 'Reject'.
+ */
 const viewUsersForAdminAprvl = (req, res) => {
     User.find({ adminApproved: false })
         .exec()
@@ -106,7 +154,7 @@ const viewUsersForAdminAprvl = (req, res) => {
                 res.json({
                     status: 200,
                     msg: "No Data obtained",
-                    data:[]
+                    data: []
                 });
             }
         })
@@ -119,9 +167,16 @@ const viewUsersForAdminAprvl = (req, res) => {
         });
 };
 
-// Update User by ID
+/**
+ * FUNCTION: editUserById
+ * PURPOSE: Updates a citizen's profile details and optionally replaces their photo.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Save Profile' button on UserProfile.js.
+ * - Endpoint: POST /judisys_api/editUserById/:id
+ */
 const editUserById = async (req, res) => {
-    const { email, contact,city,gender,dob,name } = req.body;
+    const { email, contact, city, gender, dob, name } = req.body;
     const userId = req.params.id;
 
     try {
@@ -134,6 +189,7 @@ const editUserById = async (req, res) => {
             });
         }
 
+        // Check if new phone number conflicts with another existing user
         const duplicateContact = await User.findOne({ contact });
         if (duplicateContact && duplicateContact._id.toString() !== userId) {
             return res.status(409).json({
@@ -150,7 +206,7 @@ const editUserById = async (req, res) => {
             gender,
             dob,
             name,
-            profilePic: req.file, // Optionally update profilePic if provided
+            profilePic: req.file,
         }, { new: true });
 
         return res.json({
@@ -167,7 +223,14 @@ const editUserById = async (req, res) => {
     }
 };
 
-// View User by ID
+/**
+ * FUNCTION: viewUserById
+ * PURPOSE: Fetches the complete account profile for a specific citizen.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: UserProfile.js to display the citizen's personal information.
+ * - Endpoint: POST /judisys_api/viewUserById/:id
+ */
 const viewUserById = (req, res) => {
     User.findById(req.params.id)
         .exec()
@@ -193,7 +256,14 @@ const viewUserById = (req, res) => {
         });
 };
 
-// View all active Users
+/**
+ * FUNCTION: viewAllUsers
+ * PURPOSE: Retrieves all verified citizens (adminApproved: true) for directory management.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: AdminViewUsers.js and COViewUsers.js.
+ * - Endpoint: POST /judisys_api/viewAllUsers
+ */
 const viewAllUsers = (req, res) => {
     User.find({ adminApproved: true })
         .exec()
@@ -213,8 +283,20 @@ const viewAllUsers = (req, res) => {
         });
 };
 
-
-// Login User
+/**
+ * FUNCTION: login
+ * PURPOSE: Validates a citizen's email and password to log them into the Citizen Portal.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The 'Sign In' button on UserLogin.js.
+ * - Endpoint: POST /judisys_api/loginUser
+ * - Checks:
+ *   1. Does this user exist?
+ *   2. Does the password match?
+ *   3. Has the Admin approved this account? (If false: "Please wait for Admin Approval !!")
+ *   4. Is this account currently active? (If false: "You are currently deactivated By Admin !!")
+ * - If valid: Saves user data to localStorage and redirects to UserHome.js.
+ */
 const login = (req, res) => {
     const { email, password } = req.body;
 
@@ -234,12 +316,9 @@ const login = (req, res) => {
             return res.status(403).json({ msg: 'You are currently deactivated By Admin !!' });
         }
 
-      
-
         res.json({
             status: 200,
             data: user,
-           
         });
     }).catch(err => {
         console.error(err);
@@ -247,7 +326,10 @@ const login = (req, res) => {
     });
 };
 
-// Delete Organizer by ID
+/**
+ * FUNCTION: deleteUserById
+ * PURPOSE: Permanently removes a citizen account from MongoDB.
+ */
 const deleteUserById = (req, res) => {
     User.findByIdAndDelete({ _id: req.params.id })
         .exec()
@@ -268,8 +350,15 @@ const deleteUserById = (req, res) => {
         });
 };
 
-
-// Accept Organizer by ID
+/**
+ * FUNCTION: approveUserById
+ * PURPOSE: Admin officially approves a citizen's account, enabling both 'isActive' and 'adminApproved'.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Triggered by: The green 'Approve' checkmark on AdminViewUserReqs.js.
+ * - Endpoint: POST /judisys_api/approveUserById/:id
+ * - If this data changes: The citizen is immediately permitted to log in and file cases.
+ */
 const approveUserById = (req, res) => {
     User.findByIdAndUpdate({ _id: req.params.id }, { isActive: true, adminApproved: true })
         .exec()
@@ -289,7 +378,10 @@ const approveUserById = (req, res) => {
         });
 };
 
-// Accept Organizer by ID
+/**
+ * FUNCTION: activateUserById
+ * PURPOSE: Re-enables a citizen's login access (isActive: true).
+ */
 const activateUserById = (req, res) => {
     User.findByIdAndUpdate({ _id: req.params.id }, { isActive: true })
         .exec()
@@ -309,7 +401,10 @@ const activateUserById = (req, res) => {
         });
 };
 
-// Accept Organizer by ID
+/**
+ * FUNCTION: deActivateUserById
+ * PURPOSE: Freezes a citizen's login access (isActive: false).
+ */
 const deActivateUserById = (req, res) => {
     User.findByIdAndUpdate({ _id: req.params.id }, { isActive: false })
         .exec()
@@ -328,7 +423,11 @@ const deActivateUserById = (req, res) => {
             });
         });
 };
-// Reject Organizer by ID
+
+/**
+ * FUNCTION: rejectUserById
+ * PURPOSE: Rejects a citizen's registration application by removing the record.
+ */
 const rejectUserById = (req, res) => {
     User.findByIdAndDelete({ _id: req.params.id })
         .exec()
@@ -347,9 +446,12 @@ const rejectUserById = (req, res) => {
             });
         });
 };
-// Forgot Password for Organizer
+
+/**
+ * FUNCTION: forgotPassword
+ * PURPOSE: Updates password based on the citizen's registered email address.
+ */
 const forgotPassword = (req, res) => {
-   
     User.findOneAndUpdate({ email: req.body.email }, {
         password: req.body.password
     })
@@ -375,7 +477,10 @@ const forgotPassword = (req, res) => {
         });
 };
 
-// Reset Password for Organizer
+/**
+ * FUNCTION: resetPassword
+ * PURPOSE: Verifies the citizen's old password before allowing them to set a new password.
+ */
 const resetPassword = async (req, res) => {
     let pwdMatch = false;
 
@@ -424,6 +529,7 @@ const resetPassword = async (req, res) => {
         });
     }
 };
+
 module.exports = {
     registerUser,
     uploadSingle,
@@ -439,5 +545,5 @@ module.exports = {
     approveUserById,
     deActivateUserById,
     rejectUserById,
-    
+    requestAdvocate,
 };

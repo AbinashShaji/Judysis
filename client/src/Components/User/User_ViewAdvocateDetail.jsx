@@ -1,19 +1,32 @@
+/**
+ * ============================================================================
+ * COMPONENT: User_ViewAdvocateDetail.jsx (Lawyer Public Profile Card)
+ * HANDOVER SUMMARY:
+ * This component displays the detailed public dossier for a single lawyer.
+ * A citizen viewing this page can inspect the lawyer's Bar Council registration, 
+ * years of courtroom experience, specialization, and credentials.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_view_advocate_detail/:id
+ * - Fetches from: POST /judisys_api/viewAdvocateById/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from 'react';
-import '../../Styles//User_ViewAdvocateDetail.css';
+import '../../Styles/User_ViewAdvocateDetail.css';
 import { Link, useParams } from 'react-router-dom';
 import { ViewById } from '../Services/CommonServices';
 import { IMG_BASE_URL } from '../Services/BaseURL';
-
 import { toast } from "react-toastify";
 
 function User_ViewAdvocateDetail() {
     const [advocate, setAdvocate] = useState({
-        dob:'',
-        profilePic:{filename:''},
-        idProof:{filename:''}
+        dob: '',
+        profilePic: { filename: '' },
+        idProof: { filename: '' }
     });
-    const [showModal, setShowModal] = useState(false); // State to control modal visibility
-    const [idProofUrl, setIdProofUrl] = useState(''); // State to store ID proof URL
+    const [showModal, setShowModal] = useState(false);
+    const [idProofUrl, setIdProofUrl] = useState('');
     const { id } = useParams();
 
     const fetchdata = async () => {

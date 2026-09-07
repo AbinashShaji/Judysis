@@ -1,6 +1,20 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserChattoAdvocate.js (Citizen Legal Messenger Screen)
+ * HANDOVER SUMMARY:
+ * This component provides an in-app chat interface between a citizen and their lawyer (:aid).
+ * It loads past conversation messages from MongoDB, auto-scrolls down to the newest message, 
+ * and lets the citizen type and send new messages instantly.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_chat_to_advocate/:aid
+ * - Fetches chat history: POST /judisys_api/viewChatBetweenUserAndAdv
+ * - Submits new messages: POST /judisys_api/chatting via register()
+ * ============================================================================
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import "../../Styles/UserChatToAdvocate.css";
-
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { IMG_BASE_URL } from "../Services/BaseURL";
@@ -8,7 +22,7 @@ import { register, ViewByData, ViewById } from "../Services/CommonServices";
 
 function UserChattoAdvocate() {
   const uid = localStorage.getItem("user");
-  const { aid } = useParams();
+  const { aid } = useParams(); // Advocate ID
 
   const [messageList, setMessageList] = useState([]);
   const [userDetalis, setUserDetails] = useState({

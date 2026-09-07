@@ -1,3 +1,14 @@
+/**
+ * ============================================================================
+ * COMPONENT: Landingcarousel.js (Public Homepage)
+ * HANDOVER SUMMARY:
+ * This component is the primary public front page of the JudiSys website.
+ * It combines the top navigation bar, a high-impact hero banner, service cards 
+ * (Legal Advice, Court Representation, Document Preparation), an About Us overview, 
+ * and a Contact Us section into a cohesive, welcoming experience for citizens.
+ * ============================================================================
+ */
+
 import React from "react";
 import img1 from "../../Assets/lawimg6.avif";
 import img2 from "../../Assets/law15.jpg";
@@ -10,13 +21,13 @@ import Footer from "../Common/Footer";
 import UserFooter from "../Common/UserFooter";
 import ContactUs from "../Common/ContactUs";
 
-//landing services
+// Images for service cards
 import '../../Styles/LandingServices.css'
 import img11 from "../../Assets/law11.jpeg"
 import img33 from "../../Assets/law12.jpg"
 import img22 from "../../Assets/img22.jpeg"
 
-//aboutus
+// Images for About Us showcase
 import img1s from "../../Assets/img21.jpg";
 import img2s from "../../Assets/img20.jpg";
 import img11s from "../../Assets/adv1.avif";

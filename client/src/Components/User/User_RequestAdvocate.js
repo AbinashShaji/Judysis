@@ -1,19 +1,30 @@
+/**
+ * ============================================================================
+ * COMPONENT: User_RequestAdvocate.js (Select Advocate for Case)
+ * HANDOVER SUMMARY:
+ * This component displays active lawyers available for hire when a citizen wants 
+ * to assign legal counsel to a specific case (:id).
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-request-advocate/:id  (where :id = caseId)
+ * - Fetches from: POST /judisys_api/viewActiveAdvocates
+ * - Clicking 'Request Advocate' leads to User_BookAppoinment.js (:advocateId/:caseId).
+ * ============================================================================
+ */
+
 import React, { useState, useEffect } from 'react';
 import '../../Styles/User_RequestAdvocate.css';
 import { toast } from "react-toastify";
 import { IMG_BASE_URL } from '../Services/BaseURL';
-
 import { Link, useParams } from 'react-router-dom';
 import ReactStars from "react-rating-stars-component";
 import { viewCount } from '../Services/AdminService';
 
-
 function User_RequestAdvocate() {
     const [currentPage, setCurrentPage] = useState(0);
-  const [advocates, setAdvocates] = useState([]);
-  const advocatesPerPage = 4;
-
-  const {id}=useParams();
+    const [advocates, setAdvocates] = useState([]);
+    const advocatesPerPage = 4;
+    const { id } = useParams(); // Case ID
   const fetchdata = async () => {
     try {
         const result = await viewCount('viewActiveAdvocates');

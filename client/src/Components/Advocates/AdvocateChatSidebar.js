@@ -1,8 +1,20 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateChatSidebar.js (Lawyer Chat Contacts Sidebar)
+ * HANDOVER SUMMARY:
+ * This component fetches and displays the list of all citizens who have sent messages 
+ * to or consulted with this lawyer.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Fetches contacts from: POST /judisys_api/viewChatRecipientsforAdvocateById/:id
+ * - Clicking a client card routes to: /advocate_single_chat/:uid
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../Styles/AdvocateChatSidebar.css";
 import img from "../../Assets/lawimg3.avif";
 import { Link } from "react-router-dom";
-
 import { toast } from "react-toastify";
 import { IMG_BASE_URL } from "../Services/BaseURL";
 import { ViewById } from "../Services/CommonServices";

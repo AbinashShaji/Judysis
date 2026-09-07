@@ -1,3 +1,20 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserAddCases.js (Digital Case Filing Portal)
+ * HANDOVER SUMMARY:
+ * This component is where citizens file digital legal petitions.
+ * It features an intelligent legal assistant that reads the citizen's story
+ * and automatically suggests the right legal category (Criminal, Civil, Tax, etc.).
+ * After petition submission, it immediately shows recommended lawyers specialized in that field.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_add_case
+ * - Calls: POST /judisys_api/getCaseType/:description (for AI keyword matching)
+ * - Submits to: POST /judisys_api/createCase via AddCase()
+ * - If successful: Displays matching advocates so the citizen can immediately request representation.
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import "../../Styles/UserAddCases.css";
 import { toast } from "react-toastify";
@@ -7,16 +24,21 @@ import { AddCase, registerWithFile, ViewById } from "../Services/CommonServices"
 import { Link, useNavigate } from "react-router-dom";
 
 function UserAddCases() {
-
+  // Flag indicating if case was submitted successfully
   const [status, setStatus] = useState(false);
+  
+  // Suggested case categories based on narrative text keywords
   const [suggestions, setSuggestions] = useState([]);
+  
+  // Recommended lawyers specialized in this case category
   const [advSug, setAdvSug] = useState([]);
   const [caseId, setCaseId] = useState('');
 
+  // Grab the active citizen's user ID from localStorage
   const id = localStorage.getItem("user");
   const [data, setData] = useState({
-    userId:id,
-    description:''
+    userId: id,
+    description: ''
   });
 
   const [errors, setErrors] = useState({});

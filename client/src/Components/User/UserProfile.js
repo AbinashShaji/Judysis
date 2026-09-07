@@ -1,3 +1,17 @@
+/**
+ * ============================================================================
+ * COMPONENT: UserProfile.js (Citizen Account & Profile Management)
+ * HANDOVER SUMMARY:
+ * This component lets logged-in citizens review and update their personal profile:
+ * name, phone contact, email, city, gender, birth date, and profile photo.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_profile
+ * - Fetches profile from: POST /judisys_api/viewUserById/:id
+ * - Submits profile updates to: POST /judisys_api/editUserById/:id via editByIdwithFile()
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from 'react';
 import tick from '../../Assets/editPofileCheckmark.png';
 import { toast } from "react-toastify";
@@ -6,16 +20,16 @@ import { useNavigate } from 'react-router-dom';
 import { editByIdwithFile, ViewById } from '../Services/CommonServices';
 
 function UserProfile() {
-
     const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem('user') == null) {
-      navigate('/');
-    }
-  }, [navigate]);
+    // Session protection
+    useEffect(() => {
+        if (localStorage.getItem('user') == null) {
+            navigate('/');
+        }
+    }, [navigate]);
 
-  const id = localStorage.getItem('user');
+    const id = localStorage.getItem('user');
 
     const [data, setData] = useState({
         name: '',

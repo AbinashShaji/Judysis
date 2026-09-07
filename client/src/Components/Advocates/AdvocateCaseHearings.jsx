@@ -1,3 +1,17 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateCaseHearings.jsx (Lawyer Court Hearing Timeline)
+ * HANDOVER SUMMARY:
+ * This component lets lawyers review the official hearing history of an active case (:id).
+ * The lawyer can see each court session date, courtroom proceedings notes from the judge,
+ * and the next scheduled court appearance date.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /adv-case-hearings/:id
+ * - Fetches from: POST /judisys_api/getStatusByCaseId/:id
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -5,7 +19,7 @@ import { register, ViewById } from "../Services/CommonServices";
 import "../../Styles/UserAddCases.css";
 
 function AdvocateCaseHearings() {
-  const { id } = useParams();
+  const { id } = useParams(); // Case ID
   const [hearings, setHearings] = useState([]);
   
   

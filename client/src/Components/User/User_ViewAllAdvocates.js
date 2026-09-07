@@ -1,13 +1,25 @@
+/**
+ * ============================================================================
+ * COMPONENT: User_ViewAllAdvocates.js (Lawyer Directory & Catalog)
+ * HANDOVER SUMMARY:
+ * This component displays the public advocate catalog for citizens.
+ * It renders paginated cards showcasing verified lawyers, their profile pictures,
+ * areas of specialization, and community star ratings.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user-viewalladvocate
+ * - Fetches data from: POST /judisys_api/viewAdvocates via viewCount('viewAdvocates')
+ * - Clicking 'View Profile' opens User_ViewAdvocateDetail.jsx for that lawyer.
+ * ============================================================================
+ */
+
 import React, { useState, useEffect } from "react";
 import "../../Styles/User_ViewAllAdvocates.css";
-
-
 import { Link } from "react-router-dom";
 import ReactStars from "react-rating-stars-component";
 import Rating from "react-rating";
 import { IMG_BASE_URL } from "../Services/BaseURL";
 import { viewCount } from "../Services/AdminService";
-
 
 function User_ViewAllAdvocates() {
   const [currentPage, setCurrentPage] = useState(0);

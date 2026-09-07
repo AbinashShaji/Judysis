@@ -1,24 +1,34 @@
+/**
+ * ============================================================================
+ * COMPONENT: User_BookAppoinment.js (Consultation Booking Screen)
+ * HANDOVER SUMMARY:
+ * This component allows a citizen to formally request a consultation appointment
+ * with a specific advocate regarding an existing legal case.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /user_bookappoinment/:id/:cid  (where :id = advocateId, :cid = caseId)
+ * - Fetches advocate profile from: POST /judisys_api/viewAdvocateById/:id
+ * - Submits booking via: POST /judisys_api/createAppointment
+ * - If successful: A pending appointment request appears in the advocate's queue (AdvocateViewCaseReq.js).
+ * ============================================================================
+ */
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IMG_BASE_URL } from '../Services/BaseURL';
-
 import "../../Styles/User_BookAppoinment.css";
 import { toast } from "react-toastify";
 import { register, ViewById } from "../Services/CommonServices";
-
 
 function User_BookAppoinment() {
   const [advocate, setAdvocate] = useState({
     profilePic: { filename: '' },
     idProof: { filename: '' },
-    dob:''
+    dob: ''
   });
-  const { id } = useParams();
-  const { cid } = useParams();
+  const { id } = useParams();   // Advocate ID
+  const { cid } = useParams();  // Case ID
   const userId = localStorage.getItem('user');
-
-  console.log(cid);
-
   const navigate = useNavigate();
 
   const fetchdata = async () => {

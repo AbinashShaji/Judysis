@@ -1,18 +1,29 @@
+/**
+ * ============================================================================
+ * COMPONENT: AdvocateLogin.js (Lawyer Sign In Portal)
+ * HANDOVER SUMMARY:
+ * This component authenticates advocates (attorneys).
+ * It sends credentials to POST /judisys_api/loginAdvocate.
+ * 
+ * ROUTING & RENDERING FLOW:
+ * - Route: /advocate-login
+ * - On Success: Saves advocate ID to localStorage ('advocate') and opens /advocate-home.
+ * - On Inactive/Unapproved: Displays toast warning to wait for Admin verification.
+ * ============================================================================
+ */
+
 import React, { useState } from "react";
 import "../../Styles/AdminLogin.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import img from "../../Assets/image23.png";
 import { login } from "../Services/CommonServices";
 
 function AdvocateLogin() {
- 
-        const [data, setData] = useState('');
-    
-        const [showPassword, setShowPassword] = useState(false)
-        const [errors, setErrors] = useState({});
-        const navigate = useNavigate();
+    const [data, setData] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
     
         const togglePasswordVisibility = () => {
             setShowPassword(!showPassword);
